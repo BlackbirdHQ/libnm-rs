@@ -15,24 +15,19 @@ futures-util = '0.3'
 futures-channel = '0.3'
 
 [dependencies.glib]
-git = 'https://github.com/gtk-rs/gtk-rs-core'
-rev = "9fe325a33c9922e2c858616ecb3d545ced293a46"
+version = "0.14"
 
 [dependencies.glib-sys]
-git = 'https://github.com/gtk-rs/gtk-rs-core'
-rev = "9fe325a33c9922e2c858616ecb3d545ced293a46"
+version = "0.14"
 
 [dependencies.gio]
-git = 'https://github.com/gtk-rs/gtk-rs-core'
-rev = "9fe325a33c9922e2c858616ecb3d545ced293a46"
+version = "0.14"
 
 [dependencies.gio-sys]
-git = 'https://github.com/gtk-rs/gtk-rs-core'
-rev = "9fe325a33c9922e2c858616ecb3d545ced293a46"
+version = "0.14"
 
 [dependencies.gobject-sys]
-git = 'https://github.com/gtk-rs/gtk-rs-core'
-rev = "9fe325a33c9922e2c858616ecb3d545ced293a46"
+version = "0.14"
 
 [dependencies.ffi]
 package = 'nm-sys'
