@@ -3,18 +3,67 @@
 // DO NOT EDIT
 
 use crate::Setting;
+#[cfg(any(feature = "v1_2", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
 use crate::SettingMacvlanMode;
-use glib::object::Cast;
-use glib::object::ObjectType as ObjectType_;
-use glib::signal::connect_raw;
-use glib::signal::SignalHandlerId;
-use glib::translate::*;
-use glib::ToValue;
-use std::boxed::Box as Box_;
+#[cfg(any(feature = "v1_2", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
+use glib::{
+    prelude::*,
+    signal::{connect_raw, SignalHandlerId},
+    translate::*,
+};
 use std::fmt;
-use std::mem::transmute;
+#[cfg(any(feature = "v1_2", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
+use std::{boxed::Box as Box_, mem::transmute};
 
 glib::wrapper! {
+    /// MAC VLAN Settings
+    ///
+    /// ## Properties
+    ///
+    ///
+    /// #### `mode`
+    ///  The macvlan mode, which specifies the communication mechanism between multiple
+    /// macvlans on the same lower device.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `parent`
+    ///  If given, specifies the parent interface name or parent connection UUID
+    /// from which this MAC-VLAN interface should be created. If this property is
+    /// not specified, the connection must contain an [`SettingWired`][crate::SettingWired] setting
+    /// with a [`mac-address`][struct@crate::SettingWired#mac-address] property.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `promiscuous`
+    ///  Whether the interface should be put in promiscuous mode.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `tap`
+    ///  Whether the interface should be a MACVTAP.
+    ///
+    /// Readable | Writeable
+    /// <details><summary><h4>Setting</h4></summary>
+    ///
+    ///
+    /// #### `name`
+    ///  The setting's name, which uniquely identifies the setting within the
+    /// connection. Each setting type has a name unique to that type, for
+    /// example "ppp" or "802-11-wireless" or "802-3-ethernet".
+    ///
+    /// Readable
+    /// </details>
+    ///
+    /// # Implements
+    ///
+    /// [`SettingExt`][trait@crate::prelude::SettingExt], [`trait@glib::ObjectExt`]
     #[doc(alias = "NMSettingMacvlan")]
     pub struct SettingMacvlan(Object<ffi::NMSettingMacvlan, ffi::NMSettingMacvlanClass>) @extends Setting;
 
@@ -29,6 +78,8 @@ impl SettingMacvlan {
     /// # Returns
     ///
     /// the new empty [`SettingMacvlan`][crate::SettingMacvlan] object
+    #[cfg(any(feature = "v1_2", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     #[doc(alias = "nm_setting_macvlan_new")]
     pub fn new() -> SettingMacvlan {
         unsafe { Setting::from_glib_full(ffi::nm_setting_macvlan_new()).unsafe_cast() }
@@ -37,7 +88,9 @@ impl SettingMacvlan {
     ///
     /// # Returns
     ///
-    /// the `property::SettingMacvlan::mode` property of the setting
+    /// the [`mode`][struct@crate::SettingMacvlan#mode] property of the setting
+    #[cfg(any(feature = "v1_2", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     #[doc(alias = "nm_setting_macvlan_get_mode")]
     #[doc(alias = "get_mode")]
     pub fn mode(&self) -> SettingMacvlanMode {
@@ -47,7 +100,9 @@ impl SettingMacvlan {
     ///
     /// # Returns
     ///
-    /// the `property::SettingMacvlan::parent` property of the setting
+    /// the [`parent`][struct@crate::SettingMacvlan#parent] property of the setting
+    #[cfg(any(feature = "v1_2", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     #[doc(alias = "nm_setting_macvlan_get_parent")]
     #[doc(alias = "get_parent")]
     pub fn parent(&self) -> Option<glib::GString> {
@@ -57,7 +112,9 @@ impl SettingMacvlan {
     ///
     /// # Returns
     ///
-    /// the `property::SettingMacvlan::promiscuous` property of the setting
+    /// the [`promiscuous`][struct@crate::SettingMacvlan#promiscuous] property of the setting
+    #[cfg(any(feature = "v1_2", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     #[doc(alias = "nm_setting_macvlan_get_promiscuous")]
     #[doc(alias = "get_promiscuous")]
     pub fn is_promiscuous(&self) -> bool {
@@ -71,7 +128,9 @@ impl SettingMacvlan {
     ///
     /// # Returns
     ///
-    /// the `property::SettingMacvlan::tap` property of the setting
+    /// the [`tap`][struct@crate::SettingMacvlan#tap] property of the setting
+    #[cfg(any(feature = "v1_2", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     #[doc(alias = "nm_setting_macvlan_get_tap")]
     #[doc(alias = "get_tap")]
     pub fn is_tap(&self) -> bool {
@@ -83,55 +142,31 @@ impl SettingMacvlan {
     #[cfg(any(feature = "v1_2", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     pub fn set_mode(&self, mode: u32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"mode\0".as_ptr() as *const _,
-                mode.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "mode", &mode)
     }
 
     /// If given, specifies the parent interface name or parent connection UUID
     /// from which this MAC-VLAN interface should be created. If this property is
     /// not specified, the connection must contain an [`SettingWired`][crate::SettingWired] setting
-    /// with a `property::SettingWired::mac-address` property.
+    /// with a [`mac-address`][struct@crate::SettingWired#mac-address] property.
     #[cfg(any(feature = "v1_2", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     pub fn set_parent(&self, parent: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"parent\0".as_ptr() as *const _,
-                parent.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "parent", &parent)
     }
 
     /// Whether the interface should be put in promiscuous mode.
     #[cfg(any(feature = "v1_2", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     pub fn set_promiscuous(&self, promiscuous: bool) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"promiscuous\0".as_ptr() as *const _,
-                promiscuous.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "promiscuous", &promiscuous)
     }
 
     /// Whether the interface should be a MACVTAP.
     #[cfg(any(feature = "v1_2", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     pub fn set_tap(&self, tap: bool) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"tap\0".as_ptr() as *const _,
-                tap.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "tap", &tap)
     }
 
     #[cfg(any(feature = "v1_2", feature = "dox"))]

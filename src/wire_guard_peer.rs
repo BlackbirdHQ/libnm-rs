@@ -2,12 +2,12 @@
 // from gir-files
 // DO NOT EDIT
 
-use crate::SettingCompareFlags;
-use crate::SettingSecretFlags;
+use crate::{SettingCompareFlags, SettingSecretFlags};
 use glib::translate::*;
 use std::ptr;
 
 glib::wrapper! {
+    /// The settings of one WireGuard peer.
     #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct WireGuardPeer(Shared<ffi::NMWireGuardPeer>);
 
@@ -186,12 +186,13 @@ impl WireGuardPeer {
     ) -> Result<(), glib::Error> {
         unsafe {
             let mut error = ptr::null_mut();
-            let _ = ffi::nm_wireguard_peer_is_valid(
+            let is_ok = ffi::nm_wireguard_peer_is_valid(
                 self.to_glib_none().0,
                 check_non_secrets.into_glib(),
                 check_secrets.into_glib(),
                 &mut error,
             );
+            debug_assert_eq!(is_ok == glib::ffi::GFALSE, !error.is_null());
             if error.is_null() {
                 Ok(())
             } else {
@@ -209,6 +210,7 @@ impl WireGuardPeer {
     /// a clone of `self`. This instance
     ///  is always unsealed.
     #[doc(alias = "nm_wireguard_peer_new_clone")]
+    #[must_use]
     pub fn new_clone(&self, with_secrets: bool) -> Option<WireGuardPeer> {
         unsafe {
             from_glib_full(ffi::nm_wireguard_peer_new_clone(

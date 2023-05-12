@@ -3,16 +3,39 @@
 // DO NOT EDIT
 
 use crate::Setting;
-use glib::object::Cast;
-use glib::object::ObjectType as ObjectType_;
-use glib::signal::connect_raw;
-use glib::signal::SignalHandlerId;
-use glib::translate::*;
-use std::boxed::Box as Box_;
-use std::fmt;
-use std::mem::transmute;
+use glib::{
+    prelude::*,
+    signal::{connect_raw, SignalHandlerId},
+    translate::*,
+};
+use std::{boxed::Box as Box_, fmt, mem::transmute};
 
 glib::wrapper! {
+    /// Bonding Settings
+    ///
+    /// ## Properties
+    ///
+    ///
+    /// #### `options`
+    ///  Dictionary of key/value pairs of bonding options. Both keys and values
+    /// must be strings. Option names must contain only alphanumeric characters
+    /// (ie, [a-zA-Z0-9]).
+    ///
+    /// Readable | Writeable
+    /// <details><summary><h4>Setting</h4></summary>
+    ///
+    ///
+    /// #### `name`
+    ///  The setting's name, which uniquely identifies the setting within the
+    /// connection. Each setting type has a name unique to that type, for
+    /// example "ppp" or "802-11-wireless" or "802-3-ethernet".
+    ///
+    /// Readable
+    /// </details>
+    ///
+    /// # Implements
+    ///
+    /// [`SettingExt`][trait@crate::prelude::SettingExt], [`trait@glib::ObjectExt`]
     #[doc(alias = "NMSettingBond")]
     pub struct SettingBond(Object<ffi::NMSettingBond, ffi::NMSettingBondClass>) @extends Setting;
 
@@ -100,7 +123,7 @@ impl SettingBond {
     /// # Returns
     ///
     /// the value of the bond option if not overridden by an entry in
-    ///  the `property::SettingBond::options` property.
+    ///  the [`options`][struct@crate::SettingBond#options] property.
     #[doc(alias = "nm_setting_bond_get_option_default")]
     #[doc(alias = "get_option_default")]
     pub fn option_default(&self, name: &str) -> Option<glib::GString> {
@@ -170,17 +193,11 @@ impl SettingBond {
     }
 
     //pub fn options(&self) -> /*Unimplemented*/HashTable TypeId { ns_id: 0, id: 28 }/TypeId { ns_id: 0, id: 28 } {
-    //    unsafe {
-    //        let mut value = glib::Value::from_type(</*Unknown type*/ as StaticType>::static_type());
-    //        glib::gobject_ffi::g_object_get_property(self.as_ptr() as *mut glib::gobject_ffi::GObject, b"options\0".as_ptr() as *const _, value.to_glib_none_mut().0);
-    //        value.get().expect("Return Value for property `options` getter")
-    //    }
+    //    glib::ObjectExt::property(self, "options")
     //}
 
     //pub fn set_options(&self, options: /*Unimplemented*/HashTable TypeId { ns_id: 0, id: 28 }/TypeId { ns_id: 0, id: 28 }) {
-    //    unsafe {
-    //        glib::gobject_ffi::g_object_set_property(self.as_ptr() as *mut glib::gobject_ffi::GObject, b"options\0".as_ptr() as *const _, options.to_value().to_glib_none().0);
-    //    }
+    //    glib::ObjectExt::set_property(self,"options", &options)
     //}
 
     /// Checks whether `name` is a valid bond option and `value` is a valid value for

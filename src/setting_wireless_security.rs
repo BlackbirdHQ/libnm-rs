@@ -2,28 +2,218 @@
 // from gir-files
 // DO NOT EDIT
 
-use crate::Setting;
-use crate::SettingSecretFlags;
 #[cfg(any(feature = "v1_12", feature = "dox"))]
 #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
 use crate::SettingWirelessSecurityFils;
-use crate::SettingWirelessSecurityPmf;
+use crate::{Setting, SettingSecretFlags, WepKeyType};
 #[cfg(any(feature = "v1_10", feature = "dox"))]
 #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
-use crate::SettingWirelessSecurityWpsMethod;
-use crate::WepKeyType;
-use glib::object::Cast;
-use glib::object::ObjectType as ObjectType_;
-use glib::signal::connect_raw;
-use glib::signal::SignalHandlerId;
-use glib::translate::*;
-use glib::StaticType;
-use glib::ToValue;
-use std::boxed::Box as Box_;
-use std::fmt;
-use std::mem::transmute;
+use crate::{SettingWirelessSecurityPmf, SettingWirelessSecurityWpsMethod};
+use glib::{
+    prelude::*,
+    signal::{connect_raw, SignalHandlerId},
+    translate::*,
+};
+use std::{boxed::Box as Box_, fmt, mem::transmute};
 
 glib::wrapper! {
+    /// Wi-Fi Security Settings
+    ///
+    /// ## Properties
+    ///
+    ///
+    /// #### `auth-alg`
+    ///  When WEP is used (ie, key-mgmt = "none" or "ieee8021x") indicate the
+    /// 802.11 authentication algorithm required by the AP here. One of "open"
+    /// for Open System, "shared" for Shared Key, or "leap" for Cisco LEAP. When
+    /// using Cisco LEAP (ie, key-mgmt = "ieee8021x" and auth-alg = "leap") the
+    /// "leap-username" and "leap-password" properties must be specified.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `fils`
+    ///  Indicates whether Fast Initial Link Setup (802.11ai) must be enabled for
+    /// the connection. One of [`SettingWirelessSecurityFils::Default`][crate::SettingWirelessSecurityFils::Default] (use
+    /// global default value), [`SettingWirelessSecurityFils::Disable`][crate::SettingWirelessSecurityFils::Disable]
+    /// (disable FILS), [`SettingWirelessSecurityFils::Optional`][crate::SettingWirelessSecurityFils::Optional] (enable FILS
+    /// if the supplicant and the access point support it) or
+    /// [`SettingWirelessSecurityFils::Required`][crate::SettingWirelessSecurityFils::Required] (enable FILS and fail if not
+    /// supported). When set to [`SettingWirelessSecurityFils::Default`][crate::SettingWirelessSecurityFils::Default] and
+    /// no global default is set, FILS will be optionally enabled.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `group`
+    ///  A list of group/broadcast encryption algorithms which prevents
+    /// connections to Wi-Fi networks that do not utilize one of the algorithms
+    /// in the list. For maximum compatibility leave this property empty. Each
+    /// list element may be one of "wep40", "wep104", "tkip", or "ccmp".
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `key-mgmt`
+    ///  Key management used for the connection. One of "none" (WEP or no
+    /// password protection), "ieee8021x" (Dynamic WEP), "owe" (Opportunistic
+    /// Wireless Encryption), "wpa-psk" (WPA2 + WPA3 personal), "sae" (WPA3
+    /// personal only), "wpa-eap" (WPA2 + WPA3 enterprise) or
+    /// "wpa-eap-suite-b-192" (WPA3 enterprise only).
+    ///
+    /// This property must be set for any Wi-Fi connection that uses security.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `leap-password`
+    ///  The login password for legacy LEAP connections (ie, key-mgmt =
+    /// "ieee8021x" and auth-alg = "leap").
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `leap-password-flags`
+    ///  Flags indicating how to handle the
+    /// [`leap-password`][struct@crate::SettingWirelessSecurity#leap-password] property.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `leap-username`
+    ///  The login username for legacy LEAP connections (ie, key-mgmt =
+    /// "ieee8021x" and auth-alg = "leap").
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `pairwise`
+    ///  A list of pairwise encryption algorithms which prevents connections to
+    /// Wi-Fi networks that do not utilize one of the algorithms in the list.
+    /// For maximum compatibility leave this property empty. Each list element
+    /// may be one of "tkip" or "ccmp".
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `pmf`
+    ///  Indicates whether Protected Management Frames (802.11w) must be enabled
+    /// for the connection. One of [`SettingWirelessSecurityPmf::Default`][crate::SettingWirelessSecurityPmf::Default]
+    /// (use global default value), [`SettingWirelessSecurityPmf::Disable`][crate::SettingWirelessSecurityPmf::Disable]
+    /// (disable PMF), [`SettingWirelessSecurityPmf::Optional`][crate::SettingWirelessSecurityPmf::Optional] (enable PMF if
+    /// the supplicant and the access point support it) or
+    /// [`SettingWirelessSecurityPmf::Required`][crate::SettingWirelessSecurityPmf::Required] (enable PMF and fail if not
+    /// supported). When set to [`SettingWirelessSecurityPmf::Default`][crate::SettingWirelessSecurityPmf::Default] and no
+    /// global default is set, PMF will be optionally enabled.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `proto`
+    ///  List of strings specifying the allowed WPA protocol versions to use.
+    /// Each element may be one "wpa" (allow WPA) or "rsn" (allow WPA2/RSN). If
+    /// not specified, both WPA and RSN connections are allowed.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `psk`
+    ///  Pre-Shared-Key for WPA networks. For WPA-PSK, it's either an ASCII
+    /// passphrase of 8 to 63 characters that is (as specified in the 802.11i
+    /// standard) hashed to derive the actual key, or the key in form of 64
+    /// hexadecimal character. The WPA3-Personal networks use a passphrase
+    /// of any length for SAE authentication.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `psk-flags`
+    ///  Flags indicating how to handle the [`psk`][struct@crate::SettingWirelessSecurity#psk]
+    /// property.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `wep-key-flags`
+    ///  Flags indicating how to handle the [`wep-key0`][struct@crate::SettingWirelessSecurity#wep-key0],
+    /// [`wep-key1`][struct@crate::SettingWirelessSecurity#wep-key1], [`wep-key2`][struct@crate::SettingWirelessSecurity#wep-key2],
+    /// and [`wep-key3`][struct@crate::SettingWirelessSecurity#wep-key3] properties.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `wep-key-type`
+    ///  Controls the interpretation of WEP keys. Allowed values are
+    /// [`WepKeyType::Key`][crate::WepKeyType::Key], in which case the key is either a 10- or
+    /// 26-character hexadecimal string, or a 5- or 13-character ASCII password;
+    /// or [`WepKeyType::Passphrase`][crate::WepKeyType::Passphrase], in which case the passphrase is provided
+    /// as a string and will be hashed using the de-facto MD5 method to derive
+    /// the actual WEP key.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `wep-key0`
+    ///  Index 0 WEP key. This is the WEP key used in most networks. See the
+    /// "wep-key-type" property for a description of how this key is interpreted.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `wep-key1`
+    ///  Index 1 WEP key. This WEP index is not used by most networks. See the
+    /// "wep-key-type" property for a description of how this key is interpreted.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `wep-key2`
+    ///  Index 2 WEP key. This WEP index is not used by most networks. See the
+    /// "wep-key-type" property for a description of how this key is interpreted.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `wep-key3`
+    ///  Index 3 WEP key. This WEP index is not used by most networks. See the
+    /// "wep-key-type" property for a description of how this key is interpreted.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `wep-tx-keyidx`
+    ///  When static WEP is used (ie, key-mgmt = "none") and a non-default WEP key
+    /// index is used by the AP, put that WEP key index here. Valid values are 0
+    /// (default key) through 3. Note that some consumer access points (like the
+    /// Linksys WRT54G) number the keys 1 - 4.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `wps-method`
+    ///  Flags indicating which mode of WPS is to be used if any.
+    ///
+    /// There's little point in changing the default setting as NetworkManager will
+    /// automatically determine whether it's feasible to start WPS enrollment from
+    /// the Access Point capabilities.
+    ///
+    /// WPS can be disabled by setting this property to a value of 1.
+    ///
+    /// Readable | Writeable
+    /// <details><summary><h4>Setting</h4></summary>
+    ///
+    ///
+    /// #### `name`
+    ///  The setting's name, which uniquely identifies the setting within the
+    /// connection. Each setting type has a name unique to that type, for
+    /// example "ppp" or "802-11-wireless" or "802-3-ethernet".
+    ///
+    /// Readable
+    /// </details>
+    ///
+    /// # Implements
+    ///
+    /// [`SettingExt`][trait@crate::prelude::SettingExt], [`trait@glib::ObjectExt`]
     #[doc(alias = "NMSettingWirelessSecurity")]
     pub struct SettingWirelessSecurity(Object<ffi::NMSettingWirelessSecurity, ffi::NMSettingWirelessSecurityClass>) @extends Setting;
 
@@ -139,7 +329,7 @@ impl SettingWirelessSecurity {
     ///
     /// # Returns
     ///
-    /// the `property::SettingWirelessSecurity::auth-alg` property of the setting
+    /// the [`auth-alg`][struct@crate::SettingWirelessSecurity#auth-alg] property of the setting
     #[doc(alias = "nm_setting_wireless_security_get_auth_alg")]
     #[doc(alias = "get_auth_alg")]
     pub fn auth_alg(&self) -> Option<glib::GString> {
@@ -150,6 +340,10 @@ impl SettingWirelessSecurity {
         }
     }
 
+    ///
+    /// # Returns
+    ///
+    /// the [`fils`][struct@crate::SettingWirelessSecurity#fils] property of the setting
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_setting_wireless_security_get_fils")]
@@ -184,7 +378,7 @@ impl SettingWirelessSecurity {
     ///
     /// # Returns
     ///
-    /// the `property::SettingWirelessSecurity::key-mgmt` property of the setting
+    /// the [`key-mgmt`][struct@crate::SettingWirelessSecurity#key-mgmt] property of the setting
     #[doc(alias = "nm_setting_wireless_security_get_key_mgmt")]
     #[doc(alias = "get_key_mgmt")]
     pub fn key_mgmt(&self) -> Option<glib::GString> {
@@ -198,7 +392,7 @@ impl SettingWirelessSecurity {
     ///
     /// # Returns
     ///
-    /// the `property::SettingWirelessSecurity::leap-password` property of the setting
+    /// the [`leap-password`][struct@crate::SettingWirelessSecurity#leap-password] property of the setting
     #[doc(alias = "nm_setting_wireless_security_get_leap_password")]
     #[doc(alias = "get_leap_password")]
     pub fn leap_password(&self) -> Option<glib::GString> {
@@ -213,7 +407,7 @@ impl SettingWirelessSecurity {
     /// # Returns
     ///
     /// the [`SettingSecretFlags`][crate::SettingSecretFlags] pertaining to the
-    /// `property::SettingWirelessSecurity::leap-password`
+    /// [`leap-password`][struct@crate::SettingWirelessSecurity#leap-password]
     #[doc(alias = "nm_setting_wireless_security_get_leap_password_flags")]
     #[doc(alias = "get_leap_password_flags")]
     pub fn leap_password_flags(&self) -> SettingSecretFlags {
@@ -227,7 +421,7 @@ impl SettingWirelessSecurity {
     ///
     /// # Returns
     ///
-    /// the `property::SettingWirelessSecurity::leap-username` property of the setting
+    /// the [`leap-username`][struct@crate::SettingWirelessSecurity#leap-username] property of the setting
     #[doc(alias = "nm_setting_wireless_security_get_leap_username")]
     #[doc(alias = "get_leap_username")]
     pub fn leap_username(&self) -> Option<glib::GString> {
@@ -288,6 +482,12 @@ impl SettingWirelessSecurity {
         }
     }
 
+    ///
+    /// # Returns
+    ///
+    /// the [`pmf`][struct@crate::SettingWirelessSecurity#pmf] property of the setting
+    #[cfg(any(feature = "v1_10", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     #[doc(alias = "nm_setting_wireless_security_get_pmf")]
     #[doc(alias = "get_pmf")]
     pub fn pmf(&self) -> SettingWirelessSecurityPmf {
@@ -318,7 +518,7 @@ impl SettingWirelessSecurity {
     ///
     /// # Returns
     ///
-    /// the `property::SettingWirelessSecurity::psk` property of the setting
+    /// the [`psk`][struct@crate::SettingWirelessSecurity#psk] property of the setting
     #[doc(alias = "nm_setting_wireless_security_get_psk")]
     #[doc(alias = "get_psk")]
     pub fn psk(&self) -> Option<glib::GString> {
@@ -333,7 +533,7 @@ impl SettingWirelessSecurity {
     /// # Returns
     ///
     /// the [`SettingSecretFlags`][crate::SettingSecretFlags] pertaining to the
-    /// `property::SettingWirelessSecurity::psk`
+    /// [`psk`][struct@crate::SettingWirelessSecurity#psk]
     #[doc(alias = "nm_setting_wireless_security_get_psk_flags")]
     #[doc(alias = "get_psk_flags")]
     pub fn psk_flags(&self) -> SettingSecretFlags {
@@ -378,7 +578,7 @@ impl SettingWirelessSecurity {
     ///
     /// # Returns
     ///
-    /// the `property::SettingWirelessSecurity::wep-key-type` property of the setting
+    /// the [`wep-key-type`][struct@crate::SettingWirelessSecurity#wep-key-type] property of the setting
     #[doc(alias = "nm_setting_wireless_security_get_wep_key_type")]
     #[doc(alias = "get_wep_key_type")]
     pub fn wep_key_type(&self) -> WepKeyType {
@@ -392,7 +592,7 @@ impl SettingWirelessSecurity {
     ///
     /// # Returns
     ///
-    /// the `property::SettingWirelessSecurity::wep-tx-keyidx` property of the setting
+    /// the [`wep-tx-keyidx`][struct@crate::SettingWirelessSecurity#wep-tx-keyidx] property of the setting
     #[doc(alias = "nm_setting_wireless_security_get_wep_tx_keyidx")]
     #[doc(alias = "get_wep_tx_keyidx")]
     pub fn wep_tx_keyidx(&self) -> u32 {
@@ -402,7 +602,7 @@ impl SettingWirelessSecurity {
     ///
     /// # Returns
     ///
-    /// the `property::SettingWirelessSecurity::wps-method` property of the setting
+    /// the [`wps-method`][struct@crate::SettingWirelessSecurity#wps-method] property of the setting
     #[cfg(any(feature = "v1_10", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     #[doc(alias = "nm_setting_wireless_security_get_wps_method")]
@@ -506,7 +706,7 @@ impl SettingWirelessSecurity {
     /// the index of the key (0..3 inclusive)
     /// ## `key`
     /// the WEP key as a string, in either hexadecimal, ASCII, or passphrase
-    /// form as determined by the value of the `property::SettingWirelessSecurity::wep-key-type`
+    /// form as determined by the value of the [`wep-key-type`][struct@crate::SettingWirelessSecurity#wep-key-type]
     /// property.
     #[doc(alias = "nm_setting_wireless_security_set_wep_key")]
     pub fn set_wep_key(&self, idx: u32, key: &str) {
@@ -526,13 +726,7 @@ impl SettingWirelessSecurity {
     /// "leap-username" and "leap-password" properties must be specified.
     #[doc(alias = "auth-alg")]
     pub fn set_auth_alg(&self, auth_alg: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"auth-alg\0".as_ptr() as *const _,
-                auth_alg.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "auth-alg", &auth_alg)
     }
 
     /// Indicates whether Fast Initial Link Setup (802.11ai) must be enabled for
@@ -546,13 +740,7 @@ impl SettingWirelessSecurity {
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     pub fn set_fils(&self, fils: i32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"fils\0".as_ptr() as *const _,
-                fils.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "fils", &fils)
     }
 
     /// A list of group/broadcast encryption algorithms which prevents
@@ -560,13 +748,7 @@ impl SettingWirelessSecurity {
     /// in the list. For maximum compatibility leave this property empty. Each
     /// list element may be one of "wep40", "wep104", "tkip", or "ccmp".
     pub fn set_group(&self, group: &[&str]) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"group\0".as_ptr() as *const _,
-                group.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "group", &group)
     }
 
     /// Key management used for the connection. One of "none" (WEP or no
@@ -578,52 +760,28 @@ impl SettingWirelessSecurity {
     /// This property must be set for any Wi-Fi connection that uses security.
     #[doc(alias = "key-mgmt")]
     pub fn set_key_mgmt(&self, key_mgmt: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"key-mgmt\0".as_ptr() as *const _,
-                key_mgmt.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "key-mgmt", &key_mgmt)
     }
 
     /// The login password for legacy LEAP connections (ie, key-mgmt =
     /// "ieee8021x" and auth-alg = "leap").
     #[doc(alias = "leap-password")]
     pub fn set_leap_password(&self, leap_password: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"leap-password\0".as_ptr() as *const _,
-                leap_password.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "leap-password", &leap_password)
     }
 
     /// Flags indicating how to handle the
-    /// `property::SettingWirelessSecurity::leap-password` property.
+    /// [`leap-password`][struct@crate::SettingWirelessSecurity#leap-password] property.
     #[doc(alias = "leap-password-flags")]
     pub fn set_leap_password_flags(&self, leap_password_flags: SettingSecretFlags) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"leap-password-flags\0".as_ptr() as *const _,
-                leap_password_flags.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "leap-password-flags", &leap_password_flags)
     }
 
     /// The login username for legacy LEAP connections (ie, key-mgmt =
     /// "ieee8021x" and auth-alg = "leap").
     #[doc(alias = "leap-username")]
     pub fn set_leap_username(&self, leap_username: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"leap-username\0".as_ptr() as *const _,
-                leap_username.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "leap-username", &leap_username)
     }
 
     /// A list of pairwise encryption algorithms which prevents connections to
@@ -631,13 +789,7 @@ impl SettingWirelessSecurity {
     /// For maximum compatibility leave this property empty. Each list element
     /// may be one of "tkip" or "ccmp".
     pub fn set_pairwise(&self, pairwise: &[&str]) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"pairwise\0".as_ptr() as *const _,
-                pairwise.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "pairwise", &pairwise)
     }
 
     /// Indicates whether Protected Management Frames (802.11w) must be enabled
@@ -651,26 +803,14 @@ impl SettingWirelessSecurity {
     #[cfg(any(feature = "v1_10", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     pub fn set_pmf(&self, pmf: i32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"pmf\0".as_ptr() as *const _,
-                pmf.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "pmf", &pmf)
     }
 
     /// List of strings specifying the allowed WPA protocol versions to use.
     /// Each element may be one "wpa" (allow WPA) or "rsn" (allow WPA2/RSN). If
     /// not specified, both WPA and RSN connections are allowed.
     pub fn set_proto(&self, proto: &[&str]) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"proto\0".as_ptr() as *const _,
-                proto.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "proto", &proto)
     }
 
     /// Pre-Shared-Key for WPA networks. For WPA-PSK, it's either an ASCII
@@ -679,40 +819,22 @@ impl SettingWirelessSecurity {
     /// hexadecimal character. The WPA3-Personal networks use a passphrase
     /// of any length for SAE authentication.
     pub fn set_psk(&self, psk: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"psk\0".as_ptr() as *const _,
-                psk.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "psk", &psk)
     }
 
-    /// Flags indicating how to handle the `property::SettingWirelessSecurity::psk`
+    /// Flags indicating how to handle the [`psk`][struct@crate::SettingWirelessSecurity#psk]
     /// property.
     #[doc(alias = "psk-flags")]
     pub fn set_psk_flags(&self, psk_flags: SettingSecretFlags) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"psk-flags\0".as_ptr() as *const _,
-                psk_flags.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "psk-flags", &psk_flags)
     }
 
-    /// Flags indicating how to handle the `property::SettingWirelessSecurity::wep-key0`,
-    /// `property::SettingWirelessSecurity::wep-key1`, `property::SettingWirelessSecurity::wep-key2`,
-    /// and `property::SettingWirelessSecurity::wep-key3` properties.
+    /// Flags indicating how to handle the [`wep-key0`][struct@crate::SettingWirelessSecurity#wep-key0],
+    /// [`wep-key1`][struct@crate::SettingWirelessSecurity#wep-key1], [`wep-key2`][struct@crate::SettingWirelessSecurity#wep-key2],
+    /// and [`wep-key3`][struct@crate::SettingWirelessSecurity#wep-key3] properties.
     #[doc(alias = "wep-key-flags")]
     pub fn set_wep_key_flags(&self, wep_key_flags: SettingSecretFlags) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"wep-key-flags\0".as_ptr() as *const _,
-                wep_key_flags.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "wep-key-flags", &wep_key_flags)
     }
 
     /// Controls the interpretation of WEP keys. Allowed values are
@@ -723,133 +845,63 @@ impl SettingWirelessSecurity {
     /// the actual WEP key.
     #[doc(alias = "wep-key-type")]
     pub fn set_wep_key_type(&self, wep_key_type: WepKeyType) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"wep-key-type\0".as_ptr() as *const _,
-                wep_key_type.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "wep-key-type", &wep_key_type)
     }
 
     /// Index 0 WEP key. This is the WEP key used in most networks. See the
     /// "wep-key-type" property for a description of how this key is interpreted.
     #[doc(alias = "wep-key0")]
     pub fn wep_key0(&self) -> Option<glib::GString> {
-        unsafe {
-            let mut value = glib::Value::from_type(<glib::GString as StaticType>::static_type());
-            glib::gobject_ffi::g_object_get_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"wep-key0\0".as_ptr() as *const _,
-                value.to_glib_none_mut().0,
-            );
-            value
-                .get()
-                .expect("Return Value for property `wep-key0` getter")
-        }
+        glib::ObjectExt::property(self, "wep-key0")
     }
 
     /// Index 0 WEP key. This is the WEP key used in most networks. See the
     /// "wep-key-type" property for a description of how this key is interpreted.
     #[doc(alias = "wep-key0")]
     pub fn set_wep_key0(&self, wep_key0: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"wep-key0\0".as_ptr() as *const _,
-                wep_key0.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "wep-key0", &wep_key0)
     }
 
     /// Index 1 WEP key. This WEP index is not used by most networks. See the
     /// "wep-key-type" property for a description of how this key is interpreted.
     #[doc(alias = "wep-key1")]
     pub fn wep_key1(&self) -> Option<glib::GString> {
-        unsafe {
-            let mut value = glib::Value::from_type(<glib::GString as StaticType>::static_type());
-            glib::gobject_ffi::g_object_get_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"wep-key1\0".as_ptr() as *const _,
-                value.to_glib_none_mut().0,
-            );
-            value
-                .get()
-                .expect("Return Value for property `wep-key1` getter")
-        }
+        glib::ObjectExt::property(self, "wep-key1")
     }
 
     /// Index 1 WEP key. This WEP index is not used by most networks. See the
     /// "wep-key-type" property for a description of how this key is interpreted.
     #[doc(alias = "wep-key1")]
     pub fn set_wep_key1(&self, wep_key1: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"wep-key1\0".as_ptr() as *const _,
-                wep_key1.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "wep-key1", &wep_key1)
     }
 
     /// Index 2 WEP key. This WEP index is not used by most networks. See the
     /// "wep-key-type" property for a description of how this key is interpreted.
     #[doc(alias = "wep-key2")]
     pub fn wep_key2(&self) -> Option<glib::GString> {
-        unsafe {
-            let mut value = glib::Value::from_type(<glib::GString as StaticType>::static_type());
-            glib::gobject_ffi::g_object_get_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"wep-key2\0".as_ptr() as *const _,
-                value.to_glib_none_mut().0,
-            );
-            value
-                .get()
-                .expect("Return Value for property `wep-key2` getter")
-        }
+        glib::ObjectExt::property(self, "wep-key2")
     }
 
     /// Index 2 WEP key. This WEP index is not used by most networks. See the
     /// "wep-key-type" property for a description of how this key is interpreted.
     #[doc(alias = "wep-key2")]
     pub fn set_wep_key2(&self, wep_key2: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"wep-key2\0".as_ptr() as *const _,
-                wep_key2.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "wep-key2", &wep_key2)
     }
 
     /// Index 3 WEP key. This WEP index is not used by most networks. See the
     /// "wep-key-type" property for a description of how this key is interpreted.
     #[doc(alias = "wep-key3")]
     pub fn wep_key3(&self) -> Option<glib::GString> {
-        unsafe {
-            let mut value = glib::Value::from_type(<glib::GString as StaticType>::static_type());
-            glib::gobject_ffi::g_object_get_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"wep-key3\0".as_ptr() as *const _,
-                value.to_glib_none_mut().0,
-            );
-            value
-                .get()
-                .expect("Return Value for property `wep-key3` getter")
-        }
+        glib::ObjectExt::property(self, "wep-key3")
     }
 
     /// Index 3 WEP key. This WEP index is not used by most networks. See the
     /// "wep-key-type" property for a description of how this key is interpreted.
     #[doc(alias = "wep-key3")]
     pub fn set_wep_key3(&self, wep_key3: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"wep-key3\0".as_ptr() as *const _,
-                wep_key3.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "wep-key3", &wep_key3)
     }
 
     /// When static WEP is used (ie, key-mgmt = "none") and a non-default WEP key
@@ -858,13 +910,7 @@ impl SettingWirelessSecurity {
     /// Linksys WRT54G) number the keys 1 - 4.
     #[doc(alias = "wep-tx-keyidx")]
     pub fn set_wep_tx_keyidx(&self, wep_tx_keyidx: u32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"wep-tx-keyidx\0".as_ptr() as *const _,
-                wep_tx_keyidx.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "wep-tx-keyidx", &wep_tx_keyidx)
     }
 
     /// Flags indicating which mode of WPS is to be used if any.
@@ -878,13 +924,7 @@ impl SettingWirelessSecurity {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     #[doc(alias = "wps-method")]
     pub fn set_wps_method(&self, wps_method: u32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"wps-method\0".as_ptr() as *const _,
-                wps_method.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "wps-method", &wps_method)
     }
 
     #[doc(alias = "auth-alg")]

@@ -3,20 +3,102 @@
 // DO NOT EDIT
 
 use crate::Setting;
-use crate::SettingMacsecMode;
-use crate::SettingMacsecValidation;
-use crate::SettingSecretFlags;
-use glib::object::Cast;
-use glib::object::ObjectType as ObjectType_;
-use glib::signal::connect_raw;
-use glib::signal::SignalHandlerId;
-use glib::translate::*;
-use glib::ToValue;
-use std::boxed::Box as Box_;
+#[cfg(any(feature = "v1_6", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
+use crate::{SettingMacsecMode, SettingMacsecValidation, SettingSecretFlags};
+#[cfg(any(feature = "v1_6", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
+use glib::{
+    prelude::*,
+    signal::{connect_raw, SignalHandlerId},
+    translate::*,
+};
 use std::fmt;
-use std::mem::transmute;
+#[cfg(any(feature = "v1_6", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
+use std::{boxed::Box as Box_, mem::transmute};
 
 glib::wrapper! {
+    /// MACSec Settings
+    ///
+    /// ## Properties
+    ///
+    ///
+    /// #### `encrypt`
+    ///  Whether the transmitted traffic must be encrypted.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `mka-cak`
+    ///  The pre-shared CAK (Connectivity Association Key) for MACsec
+    /// Key Agreement. Must be a string of 32 hexadecimal characters.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `mka-cak-flags`
+    ///  Flags indicating how to handle the [`mka-cak`][struct@crate::SettingMacsec#mka-cak]
+    /// property.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `mka-ckn`
+    ///  The pre-shared CKN (Connectivity-association Key Name) for
+    /// MACsec Key Agreement. Must be a string of hexadecimal characters
+    /// with a even length between 2 and 64.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `mode`
+    ///  Specifies how the CAK (Connectivity Association Key) for MKA (MACsec Key
+    /// Agreement) is obtained.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `parent`
+    ///  If given, specifies the parent interface name or parent connection UUID
+    /// from which this MACSEC interface should be created. If this property is
+    /// not specified, the connection must contain an [`SettingWired`][crate::SettingWired] setting
+    /// with a [`mac-address`][struct@crate::SettingWired#mac-address] property.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `port`
+    ///  The port component of the SCI (Secure Channel Identifier), between 1 and 65534.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `send-sci`
+    ///  Specifies whether the SCI (Secure Channel Identifier) is included
+    /// in every packet.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `validation`
+    ///  Specifies the validation mode for incoming frames.
+    ///
+    /// Readable | Writeable
+    /// <details><summary><h4>Setting</h4></summary>
+    ///
+    ///
+    /// #### `name`
+    ///  The setting's name, which uniquely identifies the setting within the
+    /// connection. Each setting type has a name unique to that type, for
+    /// example "ppp" or "802-11-wireless" or "802-3-ethernet".
+    ///
+    /// Readable
+    /// </details>
+    ///
+    /// # Implements
+    ///
+    /// [`SettingExt`][trait@crate::prelude::SettingExt], [`trait@glib::ObjectExt`]
     #[doc(alias = "NMSettingMacsec")]
     pub struct SettingMacsec(Object<ffi::NMSettingMacsec, ffi::NMSettingMacsecClass>) @extends Setting;
 
@@ -31,6 +113,8 @@ impl SettingMacsec {
     /// # Returns
     ///
     /// the new empty [`SettingMacsec`][crate::SettingMacsec] object
+    #[cfg(any(feature = "v1_6", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     #[doc(alias = "nm_setting_macsec_new")]
     pub fn new() -> SettingMacsec {
         unsafe { Setting::from_glib_full(ffi::nm_setting_macsec_new()).unsafe_cast() }
@@ -39,7 +123,9 @@ impl SettingMacsec {
     ///
     /// # Returns
     ///
-    /// the `property::SettingMacsec::encrypt` property of the setting
+    /// the [`encrypt`][struct@crate::SettingMacsec#encrypt] property of the setting
+    #[cfg(any(feature = "v1_6", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     #[doc(alias = "nm_setting_macsec_get_encrypt")]
     #[doc(alias = "get_encrypt")]
     pub fn is_encrypt(&self) -> bool {
@@ -49,7 +135,9 @@ impl SettingMacsec {
     ///
     /// # Returns
     ///
-    /// the `property::SettingMacsec::mka-cak` property of the setting
+    /// the [`mka-cak`][struct@crate::SettingMacsec#mka-cak] property of the setting
+    #[cfg(any(feature = "v1_6", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     #[doc(alias = "nm_setting_macsec_get_mka_cak")]
     #[doc(alias = "get_mka_cak")]
     pub fn mka_cak(&self) -> Option<glib::GString> {
@@ -59,7 +147,9 @@ impl SettingMacsec {
     ///
     /// # Returns
     ///
-    /// the [`SettingSecretFlags`][crate::SettingSecretFlags] pertaining to the `property::SettingMacsec::mka-cak`
+    /// the [`SettingSecretFlags`][crate::SettingSecretFlags] pertaining to the [`mka-cak`][struct@crate::SettingMacsec#mka-cak]
+    #[cfg(any(feature = "v1_6", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     #[doc(alias = "nm_setting_macsec_get_mka_cak_flags")]
     #[doc(alias = "get_mka_cak_flags")]
     pub fn mka_cak_flags(&self) -> SettingSecretFlags {
@@ -73,7 +163,9 @@ impl SettingMacsec {
     ///
     /// # Returns
     ///
-    /// the `property::SettingMacsec::mka-ckn` property of the setting
+    /// the [`mka-ckn`][struct@crate::SettingMacsec#mka-ckn] property of the setting
+    #[cfg(any(feature = "v1_6", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     #[doc(alias = "nm_setting_macsec_get_mka_ckn")]
     #[doc(alias = "get_mka_ckn")]
     pub fn mka_ckn(&self) -> Option<glib::GString> {
@@ -83,7 +175,9 @@ impl SettingMacsec {
     ///
     /// # Returns
     ///
-    /// the `property::SettingMacsec::mode` property of the setting
+    /// the [`mode`][struct@crate::SettingMacsec#mode] property of the setting
+    #[cfg(any(feature = "v1_6", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     #[doc(alias = "nm_setting_macsec_get_mode")]
     #[doc(alias = "get_mode")]
     pub fn mode(&self) -> SettingMacsecMode {
@@ -93,7 +187,9 @@ impl SettingMacsec {
     ///
     /// # Returns
     ///
-    /// the `property::SettingMacsec::parent` property of the setting
+    /// the [`parent`][struct@crate::SettingMacsec#parent] property of the setting
+    #[cfg(any(feature = "v1_6", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     #[doc(alias = "nm_setting_macsec_get_parent")]
     #[doc(alias = "get_parent")]
     pub fn parent(&self) -> Option<glib::GString> {
@@ -103,7 +199,9 @@ impl SettingMacsec {
     ///
     /// # Returns
     ///
-    /// the `property::SettingMacsec::port` property of the setting
+    /// the [`port`][struct@crate::SettingMacsec#port] property of the setting
+    #[cfg(any(feature = "v1_6", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     #[doc(alias = "nm_setting_macsec_get_port")]
     #[doc(alias = "get_port")]
     pub fn port(&self) -> i32 {
@@ -113,7 +211,7 @@ impl SettingMacsec {
     ///
     /// # Returns
     ///
-    /// the `property::SettingMacsec::send-sci` property of the setting
+    /// the [`send-sci`][struct@crate::SettingMacsec#send-sci] property of the setting
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_setting_macsec_get_send_sci")]
@@ -125,7 +223,9 @@ impl SettingMacsec {
     ///
     /// # Returns
     ///
-    /// the `property::SettingMacsec::validation` property of the setting
+    /// the [`validation`][struct@crate::SettingMacsec#validation] property of the setting
+    #[cfg(any(feature = "v1_6", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     #[doc(alias = "nm_setting_macsec_get_validation")]
     #[doc(alias = "get_validation")]
     pub fn validation(&self) -> SettingMacsecValidation {
@@ -136,58 +236,35 @@ impl SettingMacsec {
     #[cfg(any(feature = "v1_6", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     pub fn set_encrypt(&self, encrypt: bool) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"encrypt\0".as_ptr() as *const _,
-                encrypt.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "encrypt", &encrypt)
     }
 
     /// The pre-shared CAK (Connectivity Association Key) for MACsec
-    /// Key Agreement.
+    /// Key Agreement. Must be a string of 32 hexadecimal characters.
     #[cfg(any(feature = "v1_6", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     #[doc(alias = "mka-cak")]
     pub fn set_mka_cak(&self, mka_cak: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"mka-cak\0".as_ptr() as *const _,
-                mka_cak.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "mka-cak", &mka_cak)
     }
 
-    /// Flags indicating how to handle the `property::SettingMacsec::mka-cak`
+    /// Flags indicating how to handle the [`mka-cak`][struct@crate::SettingMacsec#mka-cak]
     /// property.
     #[cfg(any(feature = "v1_6", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     #[doc(alias = "mka-cak-flags")]
     pub fn set_mka_cak_flags(&self, mka_cak_flags: SettingSecretFlags) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"mka-cak-flags\0".as_ptr() as *const _,
-                mka_cak_flags.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "mka-cak-flags", &mka_cak_flags)
     }
 
     /// The pre-shared CKN (Connectivity-association Key Name) for
-    /// MACsec Key Agreement.
+    /// MACsec Key Agreement. Must be a string of hexadecimal characters
+    /// with a even length between 2 and 64.
     #[cfg(any(feature = "v1_6", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     #[doc(alias = "mka-ckn")]
     pub fn set_mka_ckn(&self, mka_ckn: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"mka-ckn\0".as_ptr() as *const _,
-                mka_ckn.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "mka-ckn", &mka_ckn)
     }
 
     /// Specifies how the CAK (Connectivity Association Key) for MKA (MACsec Key
@@ -195,42 +272,24 @@ impl SettingMacsec {
     #[cfg(any(feature = "v1_6", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     pub fn set_mode(&self, mode: i32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"mode\0".as_ptr() as *const _,
-                mode.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "mode", &mode)
     }
 
     /// If given, specifies the parent interface name or parent connection UUID
     /// from which this MACSEC interface should be created. If this property is
     /// not specified, the connection must contain an [`SettingWired`][crate::SettingWired] setting
-    /// with a `property::SettingWired::mac-address` property.
+    /// with a [`mac-address`][struct@crate::SettingWired#mac-address] property.
     #[cfg(any(feature = "v1_6", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     pub fn set_parent(&self, parent: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"parent\0".as_ptr() as *const _,
-                parent.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "parent", &parent)
     }
 
     /// The port component of the SCI (Secure Channel Identifier), between 1 and 65534.
     #[cfg(any(feature = "v1_6", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     pub fn set_port(&self, port: i32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"port\0".as_ptr() as *const _,
-                port.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "port", &port)
     }
 
     /// Specifies whether the SCI (Secure Channel Identifier) is included
@@ -239,26 +298,14 @@ impl SettingMacsec {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "send-sci")]
     pub fn set_send_sci(&self, send_sci: bool) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"send-sci\0".as_ptr() as *const _,
-                send_sci.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "send-sci", &send_sci)
     }
 
     /// Specifies the validation mode for incoming frames.
     #[cfg(any(feature = "v1_6", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     pub fn set_validation(&self, validation: i32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"validation\0".as_ptr() as *const _,
-                validation.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "validation", &validation)
     }
 
     #[cfg(any(feature = "v1_6", feature = "dox"))]

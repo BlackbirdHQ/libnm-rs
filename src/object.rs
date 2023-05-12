@@ -2,19 +2,44 @@
 // from gir-files
 // DO NOT EDIT
 
-#[cfg(any(feature = "v1_24", feature = "dox"))]
-#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_24")))]
-use crate::Client;
-use glib::object::Cast;
-use glib::object::IsA;
-use glib::signal::connect_raw;
-use glib::signal::SignalHandlerId;
-use glib::translate::*;
-use std::boxed::Box as Box_;
-use std::fmt;
-use std::mem::transmute;
+use glib::{
+    prelude::*,
+    signal::{connect_raw, SignalHandlerId},
+    translate::*,
+};
+use std::{boxed::Box as Box_, fmt, mem::transmute};
 
 glib::wrapper! {
+    ///
+    ///
+    /// This is an Abstract Base Class, you cannot instantiate it.
+    ///
+    /// ## Properties
+    ///
+    ///
+    /// #### `client`
+    ///  The NMClient instance as returned by `nm_object_get_client()`.
+    ///
+    /// When an NMObject gets removed from the NMClient cache,
+    /// the NMObject:path property stays unchanged, but this client
+    /// instance gets reset to [`None`]. You can use this property to
+    /// track removal of the object from the cache.
+    ///
+    /// Readable
+    ///
+    ///
+    /// #### `path`
+    ///  The D-Bus object path.
+    ///
+    /// The D-Bus path of an object instance never changes, even if the object
+    /// gets removed from the cache. To see whether the object is still in the
+    /// cache, check NMObject:client.
+    ///
+    /// Readable
+    ///
+    /// # Implements
+    ///
+    /// [`ObjectExt`][trait@crate::prelude::ObjectExt], [`trait@glib::ObjectExt`]
     #[doc(alias = "NMObject")]
     pub struct Object(Object<ffi::NMObject, ffi::NMObjectClass>);
 
@@ -23,7 +48,9 @@ glib::wrapper! {
     }
 }
 
-pub const NONE_OBJECT: Option<&Object> = None;
+impl Object {
+    pub const NONE: Option<&'static Object> = None;
+}
 
 /// Trait containing all [`struct@Object`] methods.
 ///
@@ -31,21 +58,11 @@ pub const NONE_OBJECT: Option<&Object> = None;
 ///
 /// [`AccessPoint`][struct@crate::AccessPoint], [`ActiveConnection`][struct@crate::ActiveConnection], [`Checkpoint`][struct@crate::Checkpoint], [`Device`][struct@crate::Device], [`DhcpConfig`][struct@crate::DhcpConfig], [`IPConfig`][struct@crate::IPConfig], [`Object`][struct@crate::Object], [`RemoteConnection`][struct@crate::RemoteConnection], [`WifiP2PPeer`][struct@crate::WifiP2PPeer], [`WimaxNsp`][struct@crate::WimaxNsp]
 pub trait ObjectExt: 'static {
-    /// Returns the [`Client`][crate::Client] instance in which object is cached.
-    /// Also, if the object got removed from the client cached,
-    /// this returns [`None`]. So it can be used to check whether the
-    /// object is still alive.
-    ///
-    /// # Returns
-    ///
-    /// the [`Client`][crate::Client] cache in which the
-    /// object can be found, or [`None`] if the object is no longer
-    /// cached.
-    #[cfg(any(feature = "v1_24", feature = "dox"))]
-    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_24")))]
-    #[doc(alias = "nm_object_get_client")]
-    #[doc(alias = "get_client")]
-    fn client(&self) -> Option<Client>;
+    //#[cfg(any(feature = "v1_24", feature = "dox"))]
+    //#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_24")))]
+    //#[doc(alias = "nm_object_get_client")]
+    //#[doc(alias = "get_client")]
+    //fn client(&self) -> /*Unimplemented*/Option<Basic: Pointer>;
 
     /// Gets the DBus path of the [`Object`][crate::Object].
     ///
@@ -56,24 +73,53 @@ pub trait ObjectExt: 'static {
     ///
     /// Note that the D-Bus path of an NMObject never changes, even
     /// if the instance gets removed from the cache. To find out
-    /// whether the object is still alive/cached, check [`client()`][Self::client()].
+    /// whether the object is still alive/cached, check `nm_object_get_client()`.
     #[doc(alias = "nm_object_get_path")]
     #[doc(alias = "get_path")]
     fn path(&self) -> Option<glib::GString>;
+
+    #[cfg(any(feature = "v1_34", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_34")))]
+    #[doc(alias = "client")]
+    fn connect_client_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId;
 
     #[doc(alias = "path")]
     fn connect_path_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId;
 }
 
 impl<O: IsA<Object>> ObjectExt for O {
-    #[cfg(any(feature = "v1_24", feature = "dox"))]
-    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_24")))]
-    fn client(&self) -> Option<Client> {
-        unsafe { from_glib_none(ffi::nm_object_get_client(self.as_ref().to_glib_none().0)) }
-    }
+    //#[cfg(any(feature = "v1_24", feature = "dox"))]
+    //#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_24")))]
+    //fn client(&self) -> /*Unimplemented*/Option<Basic: Pointer> {
+    //    unsafe { TODO: call ffi:nm_object_get_client() }
+    //}
 
     fn path(&self) -> Option<glib::GString> {
         unsafe { from_glib_none(ffi::nm_object_get_path(self.as_ref().to_glib_none().0)) }
+    }
+
+    #[cfg(any(feature = "v1_34", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_34")))]
+    fn connect_client_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {
+        unsafe extern "C" fn notify_client_trampoline<P: IsA<Object>, F: Fn(&P) + 'static>(
+            this: *mut ffi::NMObject,
+            _param_spec: glib::ffi::gpointer,
+            f: glib::ffi::gpointer,
+        ) {
+            let f: &F = &*(f as *const F);
+            f(Object::from_glib_borrow(this).unsafe_cast_ref())
+        }
+        unsafe {
+            let f: Box_<F> = Box_::new(f);
+            connect_raw(
+                self.as_ptr() as *mut _,
+                b"notify::client\0".as_ptr() as *const _,
+                Some(transmute::<_, unsafe extern "C" fn()>(
+                    notify_client_trampoline::<Self, F> as *const (),
+                )),
+                Box_::into_raw(f),
+            )
+        }
     }
 
     fn connect_path_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {

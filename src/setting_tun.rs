@@ -3,18 +3,85 @@
 // DO NOT EDIT
 
 use crate::Setting;
+#[cfg(any(feature = "v1_2", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
 use crate::SettingTunMode;
-use glib::object::Cast;
-use glib::object::ObjectType as ObjectType_;
-use glib::signal::connect_raw;
-use glib::signal::SignalHandlerId;
-use glib::translate::*;
-use glib::ToValue;
-use std::boxed::Box as Box_;
+#[cfg(any(feature = "v1_2", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
+use glib::{
+    prelude::*,
+    signal::{connect_raw, SignalHandlerId},
+    translate::*,
+};
 use std::fmt;
-use std::mem::transmute;
+#[cfg(any(feature = "v1_2", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
+use std::{boxed::Box as Box_, mem::transmute};
 
 glib::wrapper! {
+    /// Tunnel Settings
+    ///
+    /// ## Properties
+    ///
+    ///
+    /// #### `group`
+    ///  The group ID which will own the device. If set to [`None`] everyone
+    /// will be able to use the device.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `mode`
+    ///  The operating mode of the virtual device. Allowed values are
+    /// [`SettingTunMode::Tun`][crate::SettingTunMode::Tun] to create a layer 3 device and
+    /// [`SettingTunMode::Tap`][crate::SettingTunMode::Tap] to create an Ethernet-like layer 2
+    /// one.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `multi-queue`
+    ///  If the property is set to [`true`], the interface will support
+    /// multiple file descriptors (queues) to parallelize packet
+    /// sending or receiving. Otherwise, the interface will only
+    /// support a single queue.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `owner`
+    ///  The user ID which will own the device. If set to [`None`] everyone
+    /// will be able to use the device.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `pi`
+    ///  If [`true`] the interface will prepend a 4 byte header describing the
+    /// physical interface to the packets.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `vnet-hdr`
+    ///  If [`true`] the IFF_VNET_HDR the tunnel packets will include a virtio
+    /// network header.
+    ///
+    /// Readable | Writeable
+    /// <details><summary><h4>Setting</h4></summary>
+    ///
+    ///
+    /// #### `name`
+    ///  The setting's name, which uniquely identifies the setting within the
+    /// connection. Each setting type has a name unique to that type, for
+    /// example "ppp" or "802-11-wireless" or "802-3-ethernet".
+    ///
+    /// Readable
+    /// </details>
+    ///
+    /// # Implements
+    ///
+    /// [`SettingExt`][trait@crate::prelude::SettingExt], [`trait@glib::ObjectExt`]
     #[doc(alias = "NMSettingTun")]
     pub struct SettingTun(Object<ffi::NMSettingTun, ffi::NMSettingTunClass>) @extends Setting;
 
@@ -29,6 +96,8 @@ impl SettingTun {
     /// # Returns
     ///
     /// the new empty [`SettingTun`][crate::SettingTun] object
+    #[cfg(any(feature = "v1_2", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     #[doc(alias = "nm_setting_tun_new")]
     pub fn new() -> SettingTun {
         unsafe { Setting::from_glib_full(ffi::nm_setting_tun_new()).unsafe_cast() }
@@ -37,7 +106,9 @@ impl SettingTun {
     ///
     /// # Returns
     ///
-    /// the `property::SettingTun::group` property of the setting
+    /// the [`group`][struct@crate::SettingTun#group] property of the setting
+    #[cfg(any(feature = "v1_2", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     #[doc(alias = "nm_setting_tun_get_group")]
     #[doc(alias = "get_group")]
     pub fn group(&self) -> Option<glib::GString> {
@@ -47,7 +118,9 @@ impl SettingTun {
     ///
     /// # Returns
     ///
-    /// the `property::SettingTun::mode` property of the setting
+    /// the [`mode`][struct@crate::SettingTun#mode] property of the setting
+    #[cfg(any(feature = "v1_2", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     #[doc(alias = "nm_setting_tun_get_mode")]
     #[doc(alias = "get_mode")]
     pub fn mode(&self) -> SettingTunMode {
@@ -57,7 +130,9 @@ impl SettingTun {
     ///
     /// # Returns
     ///
-    /// the `property::SettingTun::multi-queue` property of the setting
+    /// the [`multi-queue`][struct@crate::SettingTun#multi-queue] property of the setting
+    #[cfg(any(feature = "v1_2", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     #[doc(alias = "nm_setting_tun_get_multi_queue")]
     #[doc(alias = "get_multi_queue")]
     pub fn is_multi_queue(&self) -> bool {
@@ -67,7 +142,9 @@ impl SettingTun {
     ///
     /// # Returns
     ///
-    /// the `property::SettingTun::owner` property of the setting
+    /// the [`owner`][struct@crate::SettingTun#owner] property of the setting
+    #[cfg(any(feature = "v1_2", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     #[doc(alias = "nm_setting_tun_get_owner")]
     #[doc(alias = "get_owner")]
     pub fn owner(&self) -> Option<glib::GString> {
@@ -77,7 +154,9 @@ impl SettingTun {
     ///
     /// # Returns
     ///
-    /// the `property::SettingTun::pi` property of the setting
+    /// the [`pi`][struct@crate::SettingTun#pi] property of the setting
+    #[cfg(any(feature = "v1_2", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     #[doc(alias = "nm_setting_tun_get_pi")]
     #[doc(alias = "get_pi")]
     pub fn is_pi(&self) -> bool {
@@ -87,7 +166,9 @@ impl SettingTun {
     ///
     /// # Returns
     ///
-    /// the `property::SettingTun::vnet_hdr` property of the setting
+    /// the [`vnet_hdr`][struct@crate::SettingTun#vnet_hdr] property of the setting
+    #[cfg(any(feature = "v1_2", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     #[doc(alias = "nm_setting_tun_get_vnet_hdr")]
     #[doc(alias = "get_vnet_hdr")]
     pub fn is_vnet_hdr(&self) -> bool {
@@ -99,13 +180,7 @@ impl SettingTun {
     #[cfg(any(feature = "v1_2", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     pub fn set_group(&self, group: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"group\0".as_ptr() as *const _,
-                group.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "group", &group)
     }
 
     /// The operating mode of the virtual device. Allowed values are
@@ -115,13 +190,7 @@ impl SettingTun {
     #[cfg(any(feature = "v1_2", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     pub fn set_mode(&self, mode: u32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"mode\0".as_ptr() as *const _,
-                mode.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "mode", &mode)
     }
 
     /// If the property is set to [`true`], the interface will support
@@ -132,13 +201,7 @@ impl SettingTun {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     #[doc(alias = "multi-queue")]
     pub fn set_multi_queue(&self, multi_queue: bool) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"multi-queue\0".as_ptr() as *const _,
-                multi_queue.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "multi-queue", &multi_queue)
     }
 
     /// The user ID which will own the device. If set to [`None`] everyone
@@ -146,13 +209,7 @@ impl SettingTun {
     #[cfg(any(feature = "v1_2", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     pub fn set_owner(&self, owner: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"owner\0".as_ptr() as *const _,
-                owner.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "owner", &owner)
     }
 
     /// If [`true`] the interface will prepend a 4 byte header describing the
@@ -160,13 +217,7 @@ impl SettingTun {
     #[cfg(any(feature = "v1_2", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     pub fn set_pi(&self, pi: bool) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"pi\0".as_ptr() as *const _,
-                pi.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "pi", &pi)
     }
 
     /// If [`true`] the IFF_VNET_HDR the tunnel packets will include a virtio
@@ -175,13 +226,7 @@ impl SettingTun {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     #[doc(alias = "vnet-hdr")]
     pub fn set_vnet_hdr(&self, vnet_hdr: bool) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"vnet-hdr\0".as_ptr() as *const _,
-                vnet_hdr.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "vnet-hdr", &vnet_hdr)
     }
 
     #[cfg(any(feature = "v1_2", feature = "dox"))]

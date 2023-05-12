@@ -43,6 +43,8 @@ impl TeamLinkWatcher {
     /// # Returns
     ///
     /// the new [`TeamLinkWatcher`][crate::TeamLinkWatcher] object, or [`None`] on error
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_team_link_watcher_new_arp_ping")]
     pub fn new_arp_ping(
         init_wait: i32,
@@ -133,6 +135,8 @@ impl TeamLinkWatcher {
     /// # Returns
     ///
     /// the new [`TeamLinkWatcher`][crate::TeamLinkWatcher] object
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_team_link_watcher_new_ethtool")]
     pub fn new_ethtool(delay_up: i32, delay_down: i32) -> Result<TeamLinkWatcher, glib::Error> {
         unsafe {
@@ -160,6 +164,8 @@ impl TeamLinkWatcher {
     /// # Returns
     ///
     /// the new [`TeamLinkWatcher`][crate::TeamLinkWatcher] object, or [`None`] on error
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_team_link_watcher_new_nsna_ping")]
     pub fn new_nsna_ping(
         init_wait: i32,
@@ -189,19 +195,16 @@ impl TeamLinkWatcher {
     /// # Returns
     ///
     /// a copy of `self`
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_team_link_watcher_dup")]
+    #[must_use]
     pub fn dup(&self) -> Option<TeamLinkWatcher> {
         unsafe { from_glib_full(ffi::nm_team_link_watcher_dup(self.to_glib_none().0)) }
     }
 
-    /// Determines if two [`TeamLinkWatcher`][crate::TeamLinkWatcher] objects contain the same values
-    /// in all the properties.
-    /// ## `other`
-    /// the [`TeamLinkWatcher`][crate::TeamLinkWatcher] to compare `self` to.
-    ///
-    /// # Returns
-    ///
-    /// [`true`] if the objects contain the same values, [`false`] if they do not.
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_team_link_watcher_equal")]
     fn equal(&self, other: &TeamLinkWatcher) -> bool {
         unsafe {
@@ -214,6 +217,8 @@ impl TeamLinkWatcher {
 
     /// Gets the delay_down interval (in milliseconds) that elapses between the link
     /// going down and the runner being notified about it.
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_team_link_watcher_get_delay_down")]
     #[doc(alias = "get_delay_down")]
     pub fn delay_down(&self) -> i32 {
@@ -222,6 +227,8 @@ impl TeamLinkWatcher {
 
     /// Gets the delay_up interval (in milliseconds) that elapses between the link
     /// coming up and the runner being notified about it.
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_team_link_watcher_get_delay_up")]
     #[doc(alias = "get_delay_up")]
     pub fn delay_up(&self) -> i32 {
@@ -229,6 +236,8 @@ impl TeamLinkWatcher {
     }
 
     /// Gets the arp ping watcher flags.
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_team_link_watcher_get_flags")]
     #[doc(alias = "get_flags")]
     pub fn flags(&self) -> TeamLinkWatcherArpPingFlags {
@@ -237,6 +246,8 @@ impl TeamLinkWatcher {
 
     /// Gets the init_wait interval (in milliseconds) that the team slave should
     /// wait before sending the first packet to the target host.
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_team_link_watcher_get_init_wait")]
     #[doc(alias = "get_init_wait")]
     pub fn init_wait(&self) -> i32 {
@@ -245,6 +256,8 @@ impl TeamLinkWatcher {
 
     /// Gets the interval (in milliseconds) that the team slave should wait between
     /// sending two check packets to the target host.
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_team_link_watcher_get_interval")]
     #[doc(alias = "get_interval")]
     pub fn interval(&self) -> i32 {
@@ -252,6 +265,8 @@ impl TeamLinkWatcher {
     }
 
     /// Gets the number of missed replies after which the link is considered down.
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_team_link_watcher_get_missed_max")]
     #[doc(alias = "get_missed_max")]
     pub fn missed_max(&self) -> i32 {
@@ -259,6 +274,8 @@ impl TeamLinkWatcher {
     }
 
     /// Gets the name of the link watcher to be used.
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_team_link_watcher_get_name")]
     #[doc(alias = "get_name")]
     pub fn name(&self) -> Option<glib::GString> {
@@ -266,6 +283,8 @@ impl TeamLinkWatcher {
     }
 
     /// Gets the ip address to be used as source for the link probing packets.
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_team_link_watcher_get_source_host")]
     #[doc(alias = "get_source_host")]
     pub fn source_host(&self) -> Option<glib::GString> {
@@ -278,6 +297,8 @@ impl TeamLinkWatcher {
 
     /// Gets the host name/ip address to be used as destination for the link probing
     /// packets.
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_team_link_watcher_get_target_host")]
     #[doc(alias = "get_target_host")]
     pub fn target_host(&self) -> Option<glib::GString> {
@@ -298,6 +319,8 @@ impl TeamLinkWatcher {
     }
 }
 
+#[cfg(any(feature = "v1_12", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
 impl PartialEq for TeamLinkWatcher {
     #[inline]
     fn eq(&self, other: &Self) -> bool {

@@ -2,19 +2,106 @@
 // from gir-files
 // DO NOT EDIT
 
-use crate::Connection;
-use crate::Object;
-use crate::_80211ApFlags;
-use glib::object::IsA;
-use glib::object::ObjectType as ObjectType_;
-use glib::signal::connect_raw;
-use glib::signal::SignalHandlerId;
-use glib::translate::*;
-use std::boxed::Box as Box_;
-use std::fmt;
-use std::mem::transmute;
+use crate::{Connection, Object, _80211ApFlags};
+use glib::{
+    prelude::*,
+    signal::{connect_raw, SignalHandlerId},
+    translate::*,
+};
+use std::{boxed::Box as Box_, fmt, mem::transmute};
 
 glib::wrapper! {
+    ///
+    ///
+    /// ## Properties
+    ///
+    ///
+    /// #### `flags`
+    ///  The flags of the P2P peer.
+    ///
+    /// Readable
+    ///
+    ///
+    /// #### `hw-address`
+    ///  The hardware address of the P2P peer.
+    ///
+    /// Readable
+    ///
+    ///
+    /// #### `last-seen`
+    ///  The timestamp (in CLOCK_BOOTTIME seconds) for the last time the
+    /// P2P peer was found. A value of -1 means the peer has never been seen.
+    ///
+    /// Readable
+    ///
+    ///
+    /// #### `manufacturer`
+    ///  The manufacturer of the P2P peer.
+    ///
+    /// Readable
+    ///
+    ///
+    /// #### `model`
+    ///  The model of the P2P peer.
+    ///
+    /// Readable
+    ///
+    ///
+    /// #### `model-number`
+    ///  The hardware address of the P2P peer.
+    ///
+    /// Readable
+    ///
+    ///
+    /// #### `name`
+    ///  The name of the P2P peer.
+    ///
+    /// Readable
+    ///
+    ///
+    /// #### `serial`
+    ///  The serial number of the P2P peer.
+    ///
+    /// Readable
+    ///
+    ///
+    /// #### `strength`
+    ///  The current signal strength of the P2P peer.
+    ///
+    /// Readable
+    ///
+    ///
+    /// #### `wfd-ies`
+    ///  The WFD information elements of the P2P peer.
+    ///
+    /// Readable
+    /// <details><summary><h4>Object</h4></summary>
+    ///
+    ///
+    /// #### `client`
+    ///  The NMClient instance as returned by `nm_object_get_client()`.
+    ///
+    /// When an NMObject gets removed from the NMClient cache,
+    /// the NMObject:path property stays unchanged, but this client
+    /// instance gets reset to [`None`]. You can use this property to
+    /// track removal of the object from the cache.
+    ///
+    /// Readable
+    ///
+    ///
+    /// #### `path`
+    ///  The D-Bus object path.
+    ///
+    /// The D-Bus path of an object instance never changes, even if the object
+    /// gets removed from the cache. To see whether the object is still in the
+    /// cache, check NMObject:client.
+    ///
+    /// Readable
+    /// </details>
+    ///
+    /// # Implements
+    ///
+    /// [`ObjectExt`][trait@crate::prelude::ObjectExt], [`trait@glib::ObjectExt`]
     #[doc(alias = "NMWifiP2PPeer")]
     pub struct WifiP2PPeer(Object<ffi::NMWifiP2PPeer, ffi::NMWifiP2PPeerClass>) @extends Object;
 
@@ -35,7 +122,7 @@ impl WifiP2PPeer {
     /// [`true`] if the connection may be activated with this Wi-Fi P2P Peer,
     /// [`false`] if it cannot be.
     #[doc(alias = "nm_wifi_p2p_peer_connection_valid")]
-    pub fn connection_valid<P: IsA<Connection>>(&self, connection: &P) -> bool {
+    pub fn connection_valid(&self, connection: &impl IsA<Connection>) -> bool {
         unsafe {
             from_glib(ffi::nm_wifi_p2p_peer_connection_valid(
                 self.to_glib_none().0,

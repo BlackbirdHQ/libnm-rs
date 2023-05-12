@@ -6,17 +6,126 @@ use crate::Setting;
 #[cfg(any(feature = "v1_12", feature = "dox"))]
 #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
 use crate::TeamLinkWatcher;
-use glib::object::Cast;
-use glib::object::ObjectType as ObjectType_;
-use glib::signal::connect_raw;
-use glib::signal::SignalHandlerId;
-use glib::translate::*;
-use glib::ToValue;
-use std::boxed::Box as Box_;
-use std::fmt;
-use std::mem::transmute;
+use glib::{
+    prelude::*,
+    signal::{connect_raw, SignalHandlerId},
+    translate::*,
+};
+use std::{boxed::Box as Box_, fmt, mem::transmute};
 
 glib::wrapper! {
+    /// Teaming Settings
+    ///
+    /// ## Properties
+    ///
+    ///
+    /// #### `config`
+    ///  The JSON configuration for the team network interface. The property
+    /// should contain raw JSON configuration data suitable for teamd, because
+    /// the value is passed directly to teamd. If not specified, the default
+    /// configuration is used. See man teamd.conf for the format details.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `mcast-rejoin-count`
+    ///  Corresponds to the teamd mcast_rejoin.count.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `mcast-rejoin-interval`
+    ///  Corresponds to the teamd mcast_rejoin.interval.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `notify-peers-count`
+    ///  Corresponds to the teamd notify_peers.count.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `notify-peers-interval`
+    ///  Corresponds to the teamd notify_peers.interval.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `runner`
+    ///  Corresponds to the teamd runner.name.
+    /// Permitted values are: "roundrobin", "broadcast", "activebackup",
+    /// "loadbalance", "lacp", "random".
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `runner-active`
+    ///  Corresponds to the teamd runner.active.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `runner-agg-select-policy`
+    ///  Corresponds to the teamd runner.agg_select_policy.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `runner-fast-rate`
+    ///  Corresponds to the teamd runner.fast_rate.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `runner-hwaddr-policy`
+    ///  Corresponds to the teamd runner.hwaddr_policy.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `runner-min-ports`
+    ///  Corresponds to the teamd runner.min_ports.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `runner-sys-prio`
+    ///  Corresponds to the teamd runner.sys_prio.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `runner-tx-balancer`
+    ///  Corresponds to the teamd runner.tx_balancer.name.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `runner-tx-balancer-interval`
+    ///  Corresponds to the teamd runner.tx_balancer.interval.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `runner-tx-hash`
+    ///  Corresponds to the teamd runner.tx_hash.
+    ///
+    /// Readable | Writeable
+    /// <details><summary><h4>Setting</h4></summary>
+    ///
+    ///
+    /// #### `name`
+    ///  The setting's name, which uniquely identifies the setting within the
+    /// connection. Each setting type has a name unique to that type, for
+    /// example "ppp" or "802-11-wireless" or "802-3-ethernet".
+    ///
+    /// Readable
+    /// </details>
+    ///
+    /// # Implements
+    ///
+    /// [`SettingExt`][trait@crate::prelude::SettingExt], [`trait@glib::ObjectExt`]
     #[doc(alias = "NMSettingTeam")]
     pub struct SettingTeam(Object<ffi::NMSettingTeam, ffi::NMSettingTeamClass>) @extends Setting;
 
@@ -56,14 +165,6 @@ impl SettingTeam {
         }
     }
 
-    /// Adds a new txhash element to the setting.
-    /// ## `txhash`
-    /// the element to add to txhash
-    ///
-    /// # Returns
-    ///
-    /// [`true`] if the txhash element was added; [`false`] if the element
-    /// was already knnown.
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_setting_team_add_runner_tx_hash")]
@@ -89,7 +190,7 @@ impl SettingTeam {
     ///
     /// # Returns
     ///
-    /// the `property::SettingTeam::config` property of the setting
+    /// the [`config`][struct@crate::SettingTeam#config] property of the setting
     #[doc(alias = "nm_setting_team_get_config")]
     #[doc(alias = "get_config")]
     pub fn config(&self) -> Option<glib::GString> {
@@ -118,7 +219,7 @@ impl SettingTeam {
     ///
     /// # Returns
     ///
-    /// the #`property::SettingTeam::mcast-rejoin-count` property of the setting
+    /// the #[`mcast-rejoin-count`][struct@crate::SettingTeam#mcast-rejoin-count] property of the setting
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_setting_team_get_mcast_rejoin_count")]
@@ -130,7 +231,7 @@ impl SettingTeam {
     ///
     /// # Returns
     ///
-    /// the #`property::SettingTeam::mcast-rejoin-interval` property of the setting
+    /// the #[`mcast-rejoin-interval`][struct@crate::SettingTeam#mcast-rejoin-interval] property of the setting
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_setting_team_get_mcast_rejoin_interval")]
@@ -142,7 +243,7 @@ impl SettingTeam {
     ///
     /// # Returns
     ///
-    /// the #`property::SettingTeam::notify-peers-count` property of the setting
+    /// the #[`notify-peers-count`][struct@crate::SettingTeam#notify-peers-count] property of the setting
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_setting_team_get_notify_peers_count")]
@@ -154,7 +255,7 @@ impl SettingTeam {
     ///
     /// # Returns
     ///
-    /// the #`property::SettingTeam::notify-peers-interval` property of the setting
+    /// the #[`notify-peers-interval`][struct@crate::SettingTeam#notify-peers-interval] property of the setting
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_setting_team_get_notify_peers_interval")]
@@ -175,10 +276,6 @@ impl SettingTeam {
         unsafe { ffi::nm_setting_team_get_num_link_watchers(self.to_glib_none().0) }
     }
 
-    ///
-    /// # Returns
-    ///
-    /// the number of elements in txhash
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_setting_team_get_num_runner_tx_hash")]
@@ -190,7 +287,7 @@ impl SettingTeam {
     ///
     /// # Returns
     ///
-    /// the #`property::SettingTeam::runner` property of the setting
+    /// the #[`runner`][struct@crate::SettingTeam#runner] property of the setting
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_setting_team_get_runner")]
@@ -202,7 +299,7 @@ impl SettingTeam {
     ///
     /// # Returns
     ///
-    /// the #`property::SettingTeam::runner_active` property of the setting
+    /// the #[`runner_active`][struct@crate::SettingTeam#runner_active] property of the setting
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_setting_team_get_runner_active")]
@@ -218,7 +315,7 @@ impl SettingTeam {
     ///
     /// # Returns
     ///
-    /// the #`property::SettingTeam::runner-agg-select-policy` property of the setting
+    /// the #[`runner-agg-select-policy`][struct@crate::SettingTeam#runner-agg-select-policy] property of the setting
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_setting_team_get_runner_agg_select_policy")]
@@ -234,7 +331,7 @@ impl SettingTeam {
     ///
     /// # Returns
     ///
-    /// the #`property::SettingTeam::runner-fast-rate` property of the setting
+    /// the #[`runner-fast-rate`][struct@crate::SettingTeam#runner-fast-rate] property of the setting
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_setting_team_get_runner_fast_rate")]
@@ -250,7 +347,7 @@ impl SettingTeam {
     ///
     /// # Returns
     ///
-    /// the #`property::SettingTeam::runner-hwaddr-policy` property of the setting
+    /// the #[`runner-hwaddr-policy`][struct@crate::SettingTeam#runner-hwaddr-policy] property of the setting
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_setting_team_get_runner_hwaddr_policy")]
@@ -266,7 +363,7 @@ impl SettingTeam {
     ///
     /// # Returns
     ///
-    /// the #`property::SettingTeam::runner-min-ports` property of the setting
+    /// the #[`runner-min-ports`][struct@crate::SettingTeam#runner-min-ports] property of the setting
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_setting_team_get_runner_min_ports")]
@@ -278,7 +375,7 @@ impl SettingTeam {
     ///
     /// # Returns
     ///
-    /// the #`property::SettingTeam::runner-sys-prio` property of the setting
+    /// the #[`runner-sys-prio`][struct@crate::SettingTeam#runner-sys-prio] property of the setting
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_setting_team_get_runner_sys_prio")]
@@ -290,7 +387,7 @@ impl SettingTeam {
     ///
     /// # Returns
     ///
-    /// the #`property::SettingTeam::runner-tx-balancer` property of the setting
+    /// the #[`runner-tx-balancer`][struct@crate::SettingTeam#runner-tx-balancer] property of the setting
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_setting_team_get_runner_tx_balancer")]
@@ -306,7 +403,7 @@ impl SettingTeam {
     ///
     /// # Returns
     ///
-    /// the #`property::SettingTeam::runner-tx-balancer_interval` property of the setting
+    /// the #[`runner-tx-balancer_interval`][struct@crate::SettingTeam#runner-tx-balancer_interval] property of the setting
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_setting_team_get_runner_tx_balancer_interval")]
@@ -315,12 +412,6 @@ impl SettingTeam {
         unsafe { ffi::nm_setting_team_get_runner_tx_balancer_interval(self.to_glib_none().0) }
     }
 
-    /// ## `idx`
-    /// index number of the txhash element to return
-    ///
-    /// # Returns
-    ///
-    /// the txhash element at index `idx`
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_setting_team_get_runner_tx_hash")]
@@ -365,9 +456,6 @@ impl SettingTeam {
         }
     }
 
-    /// Removes the txhash element at index `idx`.
-    /// ## `idx`
-    /// index number of the element to remove from txhash
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_setting_team_remove_runner_tx_hash")]
@@ -401,13 +489,7 @@ impl SettingTeam {
     /// the value is passed directly to teamd. If not specified, the default
     /// configuration is used. See man teamd.conf for the format details.
     pub fn set_config(&self, config: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"config\0".as_ptr() as *const _,
-                config.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "config", &config)
     }
 
     /// Corresponds to the teamd mcast_rejoin.count.
@@ -415,13 +497,7 @@ impl SettingTeam {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "mcast-rejoin-count")]
     pub fn set_mcast_rejoin_count(&self, mcast_rejoin_count: i32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"mcast-rejoin-count\0".as_ptr() as *const _,
-                mcast_rejoin_count.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "mcast-rejoin-count", &mcast_rejoin_count)
     }
 
     /// Corresponds to the teamd mcast_rejoin.interval.
@@ -429,13 +505,7 @@ impl SettingTeam {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "mcast-rejoin-interval")]
     pub fn set_mcast_rejoin_interval(&self, mcast_rejoin_interval: i32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"mcast-rejoin-interval\0".as_ptr() as *const _,
-                mcast_rejoin_interval.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "mcast-rejoin-interval", &mcast_rejoin_interval)
     }
 
     /// Corresponds to the teamd notify_peers.count.
@@ -443,13 +513,7 @@ impl SettingTeam {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "notify-peers-count")]
     pub fn set_notify_peers_count(&self, notify_peers_count: i32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"notify-peers-count\0".as_ptr() as *const _,
-                notify_peers_count.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "notify-peers-count", &notify_peers_count)
     }
 
     /// Corresponds to the teamd notify_peers.interval.
@@ -457,13 +521,7 @@ impl SettingTeam {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "notify-peers-interval")]
     pub fn set_notify_peers_interval(&self, notify_peers_interval: i32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"notify-peers-interval\0".as_ptr() as *const _,
-                notify_peers_interval.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "notify-peers-interval", &notify_peers_interval)
     }
 
     /// Corresponds to the teamd runner.name.
@@ -472,13 +530,7 @@ impl SettingTeam {
     #[cfg(any(feature = "v1_12", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     pub fn set_runner(&self, runner: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"runner\0".as_ptr() as *const _,
-                runner.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "runner", &runner)
     }
 
     /// Corresponds to the teamd runner.active.
@@ -486,13 +538,7 @@ impl SettingTeam {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "runner-active")]
     pub fn set_runner_active(&self, runner_active: bool) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"runner-active\0".as_ptr() as *const _,
-                runner_active.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "runner-active", &runner_active)
     }
 
     /// Corresponds to the teamd runner.agg_select_policy.
@@ -500,13 +546,7 @@ impl SettingTeam {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "runner-agg-select-policy")]
     pub fn set_runner_agg_select_policy(&self, runner_agg_select_policy: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"runner-agg-select-policy\0".as_ptr() as *const _,
-                runner_agg_select_policy.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "runner-agg-select-policy", &runner_agg_select_policy)
     }
 
     /// Corresponds to the teamd runner.fast_rate.
@@ -514,13 +554,7 @@ impl SettingTeam {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "runner-fast-rate")]
     pub fn set_runner_fast_rate(&self, runner_fast_rate: bool) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"runner-fast-rate\0".as_ptr() as *const _,
-                runner_fast_rate.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "runner-fast-rate", &runner_fast_rate)
     }
 
     /// Corresponds to the teamd runner.hwaddr_policy.
@@ -528,13 +562,7 @@ impl SettingTeam {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "runner-hwaddr-policy")]
     pub fn set_runner_hwaddr_policy(&self, runner_hwaddr_policy: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"runner-hwaddr-policy\0".as_ptr() as *const _,
-                runner_hwaddr_policy.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "runner-hwaddr-policy", &runner_hwaddr_policy)
     }
 
     /// Corresponds to the teamd runner.min_ports.
@@ -542,13 +570,7 @@ impl SettingTeam {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "runner-min-ports")]
     pub fn set_runner_min_ports(&self, runner_min_ports: i32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"runner-min-ports\0".as_ptr() as *const _,
-                runner_min_ports.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "runner-min-ports", &runner_min_ports)
     }
 
     /// Corresponds to the teamd runner.sys_prio.
@@ -556,13 +578,7 @@ impl SettingTeam {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "runner-sys-prio")]
     pub fn set_runner_sys_prio(&self, runner_sys_prio: i32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"runner-sys-prio\0".as_ptr() as *const _,
-                runner_sys_prio.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "runner-sys-prio", &runner_sys_prio)
     }
 
     /// Corresponds to the teamd runner.tx_balancer.name.
@@ -570,13 +586,7 @@ impl SettingTeam {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "runner-tx-balancer")]
     pub fn set_runner_tx_balancer(&self, runner_tx_balancer: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"runner-tx-balancer\0".as_ptr() as *const _,
-                runner_tx_balancer.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "runner-tx-balancer", &runner_tx_balancer)
     }
 
     /// Corresponds to the teamd runner.tx_balancer.interval.
@@ -584,13 +594,11 @@ impl SettingTeam {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "runner-tx-balancer-interval")]
     pub fn set_runner_tx_balancer_interval(&self, runner_tx_balancer_interval: i32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"runner-tx-balancer-interval\0".as_ptr() as *const _,
-                runner_tx_balancer_interval.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(
+            self,
+            "runner-tx-balancer-interval",
+            &runner_tx_balancer_interval,
+        )
     }
 
     /// Corresponds to the teamd runner.tx_hash.
@@ -598,13 +606,7 @@ impl SettingTeam {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "runner-tx-hash")]
     pub fn set_runner_tx_hash(&self, runner_tx_hash: &[&str]) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"runner-tx-hash\0".as_ptr() as *const _,
-                runner_tx_hash.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "runner-tx-hash", &runner_tx_hash)
     }
 
     #[doc(alias = "config")]

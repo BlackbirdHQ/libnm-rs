@@ -3,18 +3,64 @@
 // DO NOT EDIT
 
 use crate::Setting;
+#[cfg(any(feature = "v1_6", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
 use crate::SettingProxyMethod;
-use glib::object::Cast;
-use glib::object::ObjectType as ObjectType_;
-use glib::signal::connect_raw;
-use glib::signal::SignalHandlerId;
-use glib::translate::*;
-use glib::ToValue;
-use std::boxed::Box as Box_;
+#[cfg(any(feature = "v1_6", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
+use glib::{
+    prelude::*,
+    signal::{connect_raw, SignalHandlerId},
+    translate::*,
+};
 use std::fmt;
-use std::mem::transmute;
+#[cfg(any(feature = "v1_6", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
+use std::{boxed::Box as Box_, mem::transmute};
 
 glib::wrapper! {
+    /// WWW Proxy Settings
+    ///
+    /// ## Properties
+    ///
+    ///
+    /// #### `browser-only`
+    ///  Whether the proxy configuration is for browser only.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `method`
+    ///  Method for proxy configuration, Default is [`SettingProxyMethod::None`][crate::SettingProxyMethod::None]
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `pac-script`
+    ///  PAC script for the connection. This is an UTF-8 encoded javascript code
+    /// that defines a FindProxyForURL() function.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `pac-url`
+    ///  PAC URL for obtaining PAC file.
+    ///
+    /// Readable | Writeable
+    /// <details><summary><h4>Setting</h4></summary>
+    ///
+    ///
+    /// #### `name`
+    ///  The setting's name, which uniquely identifies the setting within the
+    /// connection. Each setting type has a name unique to that type, for
+    /// example "ppp" or "802-11-wireless" or "802-3-ethernet".
+    ///
+    /// Readable
+    /// </details>
+    ///
+    /// # Implements
+    ///
+    /// [`SettingExt`][trait@crate::prelude::SettingExt], [`trait@glib::ObjectExt`]
     #[doc(alias = "NMSettingProxy")]
     pub struct SettingProxy(Object<ffi::NMSettingProxy, ffi::NMSettingProxyClass>) @extends Setting;
 
@@ -29,6 +75,8 @@ impl SettingProxy {
     /// # Returns
     ///
     /// the new empty [`SettingProxy`][crate::SettingProxy] object
+    #[cfg(any(feature = "v1_6", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     #[doc(alias = "nm_setting_proxy_new")]
     pub fn new() -> SettingProxy {
         unsafe { Setting::from_glib_full(ffi::nm_setting_proxy_new()).unsafe_cast() }
@@ -39,6 +87,8 @@ impl SettingProxy {
     ///
     /// [`true`] if this proxy configuration is only for browser
     /// clients/schemes, [`false`] otherwise.
+    #[cfg(any(feature = "v1_6", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     #[doc(alias = "nm_setting_proxy_get_browser_only")]
     #[doc(alias = "get_browser_only")]
     pub fn is_browser_only(&self) -> bool {
@@ -56,6 +106,8 @@ impl SettingProxy {
     /// # Returns
     ///
     /// the proxy configuration method
+    #[cfg(any(feature = "v1_6", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     #[doc(alias = "nm_setting_proxy_get_method")]
     #[doc(alias = "get_method")]
     pub fn method(&self) -> SettingProxyMethod {
@@ -65,7 +117,9 @@ impl SettingProxy {
     ///
     /// # Returns
     ///
-    /// the PAC script
+    /// the PAC script.
+    #[cfg(any(feature = "v1_6", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     #[doc(alias = "nm_setting_proxy_get_pac_script")]
     #[doc(alias = "get_pac_script")]
     pub fn pac_script(&self) -> Option<glib::GString> {
@@ -76,6 +130,8 @@ impl SettingProxy {
     /// # Returns
     ///
     /// the PAC URL for obtaining PAC file
+    #[cfg(any(feature = "v1_6", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     #[doc(alias = "nm_setting_proxy_get_pac_url")]
     #[doc(alias = "get_pac_url")]
     pub fn pac_url(&self) -> Option<glib::GString> {
@@ -87,40 +143,23 @@ impl SettingProxy {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     #[doc(alias = "browser-only")]
     pub fn set_browser_only(&self, browser_only: bool) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"browser-only\0".as_ptr() as *const _,
-                browser_only.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "browser-only", &browser_only)
     }
 
     /// Method for proxy configuration, Default is [`SettingProxyMethod::None`][crate::SettingProxyMethod::None]
     #[cfg(any(feature = "v1_6", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     pub fn set_method(&self, method: i32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"method\0".as_ptr() as *const _,
-                method.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "method", &method)
     }
 
-    /// PAC script for the connection.
+    /// PAC script for the connection. This is an UTF-8 encoded javascript code
+    /// that defines a FindProxyForURL() function.
     #[cfg(any(feature = "v1_6", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     #[doc(alias = "pac-script")]
     pub fn set_pac_script(&self, pac_script: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"pac-script\0".as_ptr() as *const _,
-                pac_script.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "pac-script", &pac_script)
     }
 
     /// PAC URL for obtaining PAC file.
@@ -128,13 +167,7 @@ impl SettingProxy {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_6")))]
     #[doc(alias = "pac-url")]
     pub fn set_pac_url(&self, pac_url: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"pac-url\0".as_ptr() as *const _,
-                pac_url.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "pac-url", &pac_url)
     }
 
     #[cfg(any(feature = "v1_6", feature = "dox"))]

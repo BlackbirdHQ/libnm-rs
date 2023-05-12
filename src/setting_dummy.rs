@@ -3,11 +3,17 @@
 // DO NOT EDIT
 
 use crate::Setting;
-use glib::object::Cast;
-use glib::translate::*;
+#[cfg(any(feature = "v1_8", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_8")))]
+use glib::{prelude::*, translate::*};
 use std::fmt;
 
 glib::wrapper! {
+    /// Dummy Link Settings
+    ///
+    /// # Implements
+    ///
+    /// [`SettingExt`][trait@crate::prelude::SettingExt], [`trait@glib::ObjectExt`]
     #[doc(alias = "NMSettingDummy")]
     pub struct SettingDummy(Object<ffi::NMSettingDummy, ffi::NMSettingDummyClass>) @extends Setting;
 
@@ -22,6 +28,8 @@ impl SettingDummy {
     /// # Returns
     ///
     /// the new empty [`SettingDummy`][crate::SettingDummy] object
+    #[cfg(any(feature = "v1_8", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_8")))]
     #[doc(alias = "nm_setting_dummy_new")]
     pub fn new() -> SettingDummy {
         unsafe { Setting::from_glib_full(ffi::nm_setting_dummy_new()).unsafe_cast() }

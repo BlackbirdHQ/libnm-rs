@@ -3,13 +3,15 @@
 // DO NOT EDIT
 
 use crate::Connection;
-use glib::object::Cast;
-use glib::object::IsA;
-use glib::translate::*;
-use std::fmt;
-use std::ptr;
+use glib::{prelude::*, translate::*};
+use std::{fmt, ptr};
 
 glib::wrapper! {
+    ///
+    ///
+    /// # Implements
+    ///
+    /// [`trait@glib::ObjectExt`], [`ConnectionExt`][trait@crate::prelude::ConnectionExt]
     #[doc(alias = "NMSimpleConnection")]
     pub struct SimpleConnection(Object<ffi::NMSimpleConnection, ffi::NMSimpleConnectionClass>) @implements Connection;
 
@@ -38,7 +40,7 @@ impl SimpleConnection {
     /// a new [`Connection`][crate::Connection] containing the same settings
     /// and properties as the source [`Connection`][crate::Connection]
     #[doc(alias = "nm_simple_connection_new_clone")]
-    pub fn new_clone<P: IsA<Connection>>(connection: &P) -> Option<Connection> {
+    pub fn new_clone(connection: &impl IsA<Connection>) -> Option<Connection> {
         unsafe {
             from_glib_full(ffi::nm_simple_connection_new_clone(
                 connection.as_ref().to_glib_none().0,
@@ -50,7 +52,7 @@ impl SimpleConnection {
     /// connection and normalize the connection. See [`ConnectionExt::to_dbus()`][crate::prelude::ConnectionExt::to_dbus()] for a
     /// description of the expected hash table.
     /// ## `dict`
-    /// a [`glib::Variant`][crate::glib::Variant] of type `NM_VARIANT_TYPE_CONNECTION` describing the connection
+    /// a [`glib::Variant`][struct@crate::glib::Variant] of type `NM_VARIANT_TYPE_CONNECTION` describing the connection
     ///
     /// # Returns
     ///

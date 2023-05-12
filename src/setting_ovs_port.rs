@@ -3,17 +3,73 @@
 // DO NOT EDIT
 
 use crate::Setting;
-use glib::object::Cast;
-use glib::object::ObjectType as ObjectType_;
-use glib::signal::connect_raw;
-use glib::signal::SignalHandlerId;
-use glib::translate::*;
-use glib::ToValue;
-use std::boxed::Box as Box_;
+#[cfg(any(feature = "v1_10", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
+use glib::{
+    prelude::*,
+    signal::{connect_raw, SignalHandlerId},
+    translate::*,
+};
 use std::fmt;
-use std::mem::transmute;
+#[cfg(any(feature = "v1_10", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
+use std::{boxed::Box as Box_, mem::transmute};
 
 glib::wrapper! {
+    /// OvsPort Link Settings
+    ///
+    /// ## Properties
+    ///
+    ///
+    /// #### `bond-downdelay`
+    ///  The time port must be inactive in order to be considered down.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `bond-mode`
+    ///  Bonding mode. One of "active-backup", "balance-slb", or "balance-tcp".
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `bond-updelay`
+    ///  The time port must be active before it starts forwarding traffic.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `lacp`
+    ///  LACP mode. One of "active", "off", or "passive".
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `tag`
+    ///  The VLAN tag in the range 0-4095.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `vlan-mode`
+    ///  The VLAN mode. One of "access", "native-tagged", "native-untagged",
+    /// "trunk" or unset.
+    ///
+    /// Readable | Writeable
+    /// <details><summary><h4>Setting</h4></summary>
+    ///
+    ///
+    /// #### `name`
+    ///  The setting's name, which uniquely identifies the setting within the
+    /// connection. Each setting type has a name unique to that type, for
+    /// example "ppp" or "802-11-wireless" or "802-3-ethernet".
+    ///
+    /// Readable
+    /// </details>
+    ///
+    /// # Implements
+    ///
+    /// [`SettingExt`][trait@crate::prelude::SettingExt], [`trait@glib::ObjectExt`]
     #[doc(alias = "NMSettingOvsPort")]
     pub struct SettingOvsPort(Object<ffi::NMSettingOvsPort, ffi::NMSettingOvsPortClass>) @extends Setting;
 
@@ -28,6 +84,8 @@ impl SettingOvsPort {
     /// # Returns
     ///
     /// the new empty [`SettingOvsPort`][crate::SettingOvsPort] object
+    #[cfg(any(feature = "v1_10", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     #[doc(alias = "nm_setting_ovs_port_new")]
     pub fn new() -> SettingOvsPort {
         unsafe { Setting::from_glib_full(ffi::nm_setting_ovs_port_new()).unsafe_cast() }
@@ -36,7 +94,9 @@ impl SettingOvsPort {
     ///
     /// # Returns
     ///
-    /// the `property::SettingOvsPort::bond-downdelay` property of the setting
+    /// the [`bond-downdelay`][struct@crate::SettingOvsPort#bond-downdelay] property of the setting
+    #[cfg(any(feature = "v1_10", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     #[doc(alias = "nm_setting_ovs_port_get_bond_downdelay")]
     #[doc(alias = "get_bond_downdelay")]
     pub fn bond_downdelay(&self) -> u32 {
@@ -46,7 +106,9 @@ impl SettingOvsPort {
     ///
     /// # Returns
     ///
-    /// the `property::SettingOvsPort::bond-mode` property of the setting
+    /// the [`bond-mode`][struct@crate::SettingOvsPort#bond-mode] property of the setting
+    #[cfg(any(feature = "v1_10", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     #[doc(alias = "nm_setting_ovs_port_get_bond_mode")]
     #[doc(alias = "get_bond_mode")]
     pub fn bond_mode(&self) -> Option<glib::GString> {
@@ -60,7 +122,9 @@ impl SettingOvsPort {
     ///
     /// # Returns
     ///
-    /// the `property::SettingOvsPort::bond-updelay` property of the setting
+    /// the [`bond-updelay`][struct@crate::SettingOvsPort#bond-updelay] property of the setting
+    #[cfg(any(feature = "v1_10", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     #[doc(alias = "nm_setting_ovs_port_get_bond_updelay")]
     #[doc(alias = "get_bond_updelay")]
     pub fn bond_updelay(&self) -> u32 {
@@ -70,7 +134,9 @@ impl SettingOvsPort {
     ///
     /// # Returns
     ///
-    /// the `property::SettingOvsPort::lacp` property of the setting
+    /// the [`lacp`][struct@crate::SettingOvsPort#lacp] property of the setting
+    #[cfg(any(feature = "v1_10", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     #[doc(alias = "nm_setting_ovs_port_get_lacp")]
     #[doc(alias = "get_lacp")]
     pub fn lacp(&self) -> Option<glib::GString> {
@@ -80,7 +146,9 @@ impl SettingOvsPort {
     ///
     /// # Returns
     ///
-    /// the `property::SettingOvsPort::tag` property of the setting
+    /// the [`tag`][struct@crate::SettingOvsPort#tag] property of the setting
+    #[cfg(any(feature = "v1_10", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     #[doc(alias = "nm_setting_ovs_port_get_tag")]
     #[doc(alias = "get_tag")]
     pub fn tag(&self) -> u32 {
@@ -90,7 +158,9 @@ impl SettingOvsPort {
     ///
     /// # Returns
     ///
-    /// the `property::SettingOvsPort::vlan-mode` property of the setting
+    /// the [`vlan-mode`][struct@crate::SettingOvsPort#vlan-mode] property of the setting
+    #[cfg(any(feature = "v1_10", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     #[doc(alias = "nm_setting_ovs_port_get_vlan_mode")]
     #[doc(alias = "get_vlan_mode")]
     pub fn vlan_mode(&self) -> Option<glib::GString> {
@@ -106,13 +176,7 @@ impl SettingOvsPort {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     #[doc(alias = "bond-downdelay")]
     pub fn set_bond_downdelay(&self, bond_downdelay: u32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"bond-downdelay\0".as_ptr() as *const _,
-                bond_downdelay.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "bond-downdelay", &bond_downdelay)
     }
 
     /// Bonding mode. One of "active-backup", "balance-slb", or "balance-tcp".
@@ -120,13 +184,7 @@ impl SettingOvsPort {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     #[doc(alias = "bond-mode")]
     pub fn set_bond_mode(&self, bond_mode: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"bond-mode\0".as_ptr() as *const _,
-                bond_mode.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "bond-mode", &bond_mode)
     }
 
     /// The time port must be active before it starts forwarding traffic.
@@ -134,39 +192,21 @@ impl SettingOvsPort {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     #[doc(alias = "bond-updelay")]
     pub fn set_bond_updelay(&self, bond_updelay: u32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"bond-updelay\0".as_ptr() as *const _,
-                bond_updelay.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "bond-updelay", &bond_updelay)
     }
 
     /// LACP mode. One of "active", "off", or "passive".
     #[cfg(any(feature = "v1_10", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     pub fn set_lacp(&self, lacp: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"lacp\0".as_ptr() as *const _,
-                lacp.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "lacp", &lacp)
     }
 
     /// The VLAN tag in the range 0-4095.
     #[cfg(any(feature = "v1_10", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     pub fn set_tag(&self, tag: u32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"tag\0".as_ptr() as *const _,
-                tag.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "tag", &tag)
     }
 
     /// The VLAN mode. One of "access", "native-tagged", "native-untagged",
@@ -175,13 +215,7 @@ impl SettingOvsPort {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     #[doc(alias = "vlan-mode")]
     pub fn set_vlan_mode(&self, vlan_mode: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"vlan-mode\0".as_ptr() as *const _,
-                vlan_mode.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "vlan-mode", &vlan_mode)
     }
 
     #[cfg(any(feature = "v1_10", feature = "dox"))]

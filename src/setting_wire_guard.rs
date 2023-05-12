@@ -2,24 +2,120 @@
 // from gir-files
 // DO NOT EDIT
 
-use crate::Setting;
-use crate::SettingSecretFlags;
 #[cfg(any(feature = "v1_20", feature = "dox"))]
 #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_20")))]
 use crate::Ternary;
-use crate::WireGuardPeer;
-use glib::object::Cast;
-use glib::object::ObjectType as ObjectType_;
-use glib::signal::connect_raw;
-use glib::signal::SignalHandlerId;
-use glib::translate::*;
-use glib::ToValue;
-use std::boxed::Box as Box_;
-use std::fmt;
-use std::mem;
-use std::mem::transmute;
+use crate::{Setting, SettingSecretFlags, WireGuardPeer};
+use glib::{
+    prelude::*,
+    signal::{connect_raw, SignalHandlerId},
+    translate::*,
+};
+use std::{boxed::Box as Box_, fmt, mem, mem::transmute};
 
 glib::wrapper! {
+    /// WireGuard Settings
+    ///
+    /// ## Properties
+    ///
+    ///
+    /// #### `fwmark`
+    ///  The use of fwmark is optional and is by default off. Setting it to 0
+    /// disables it. Otherwise, it is a 32-bit fwmark for outgoing packets.
+    ///
+    /// Note that "ip4-auto-default-route" or "ip6-auto-default-route" enabled,
+    /// implies to automatically choose a fwmark.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `ip4-auto-default-route`
+    ///  Whether to enable special handling of the IPv4 default route.
+    /// If enabled, the IPv4 default route from wireguard.peer-routes
+    /// will be placed to a dedicated routing-table and two policy routing rules
+    /// will be added. The fwmark number is also used as routing-table for the default-route,
+    /// and if fwmark is zero, an unused fwmark/table is chosen automatically.
+    /// This corresponds to what wg-quick does with Table=auto and what WireGuard
+    /// calls "Improved Rule-based Routing".
+    ///
+    /// Note that for this automatism to work, you usually don't want to set
+    /// ipv4.gateway, because that will result in a conflicting default route.
+    ///
+    /// Leaving this at the default will enable this option automatically
+    /// if ipv4.never-default is not set and there are any peers that use
+    /// a default-route as allowed-ips. Since this automatism only makes
+    /// sense if you also have a peer with an /0 allowed-ips, it is usually
+    /// not necessary to enable this explicitly. However, you can disable
+    /// it if you want to configure your own routing and rules.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `ip6-auto-default-route`
+    ///  Like ip4-auto-default-route, but for the IPv6 default route.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `listen-port`
+    ///  The listen-port. If listen-port is not specified, the port will be chosen
+    /// randomly when the interface comes up.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `mtu`
+    ///  If non-zero, only transmit packets of the specified size or smaller,
+    /// breaking larger packets up into multiple fragments.
+    ///
+    /// If zero a default MTU is used. Note that contrary to wg-quick's MTU
+    /// setting, this does not take into account the current routes at the
+    /// time of activation.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `peer-routes`
+    ///  Whether to automatically add routes for the AllowedIPs ranges
+    /// of the peers. If [`true`] (the default), NetworkManager will automatically
+    /// add routes in the routing tables according to ipv4.route-table and
+    /// ipv6.route-table. Usually you want this automatism enabled.
+    /// If [`false`], no such routes are added automatically. In this case, the
+    /// user may want to configure static routes in ipv4.routes and ipv6.routes,
+    /// respectively.
+    ///
+    /// Note that if the peer's AllowedIPs is "0.0.0.0/0" or "::/0" and the profile's
+    /// ipv4.never-default or ipv6.never-default setting is enabled, the peer route for
+    /// this peer won't be added automatically.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `private-key`
+    ///  The 256 bit private-key in base64 encoding.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `private-key-flags`
+    ///  Flags indicating how to handle the [`private-key`][struct@crate::SettingWirelessSecurity#private-key]
+    /// property.
+    ///
+    /// Readable | Writeable
+    /// <details><summary><h4>Setting</h4></summary>
+    ///
+    ///
+    /// #### `name`
+    ///  The setting's name, which uniquely identifies the setting within the
+    /// connection. Each setting type has a name unique to that type, for
+    /// example "ppp" or "802-11-wireless" or "802-3-ethernet".
+    ///
+    /// Readable
+    /// </details>
+    ///
+    /// # Implements
+    ///
+    /// [`SettingExt`][trait@crate::prelude::SettingExt], [`trait@glib::ObjectExt`]
     #[doc(alias = "NMSettingWireGuard")]
     pub struct SettingWireGuard(Object<ffi::NMSettingWireGuard, ffi::NMSettingWireGuardClass>) @extends Setting;
 
@@ -54,6 +150,10 @@ impl SettingWireGuard {
         }
     }
 
+    ///
+    /// # Returns
+    ///
+    /// the number of cleared peers.
     #[doc(alias = "nm_setting_wireguard_clear_peers")]
     pub fn clear_peers(&self) -> u32 {
         unsafe { ffi::nm_setting_wireguard_clear_peers(self.to_glib_none().0) }
@@ -162,8 +262,7 @@ impl SettingWireGuard {
                 public_key.to_glib_none().0,
                 out_idx.as_mut_ptr(),
             ));
-            let out_idx = out_idx.assume_init();
-            (ret, out_idx)
+            (ret, out_idx.assume_init())
         }
     }
 
@@ -208,7 +307,7 @@ impl SettingWireGuard {
     ///
     /// # Returns
     ///
-    /// the secret-flags for `property::SettingWireGuard::private-key`.
+    /// the secret-flags for [`private-key`][struct@crate::SettingWireGuard#private-key].
     #[doc(alias = "nm_setting_wireguard_get_private_key_flags")]
     #[doc(alias = "get_private_key_flags")]
     pub fn private_key_flags(&self) -> SettingSecretFlags {
@@ -271,13 +370,7 @@ impl SettingWireGuard {
     #[cfg(any(feature = "v1_16", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_16")))]
     pub fn set_fwmark(&self, fwmark: u32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"fwmark\0".as_ptr() as *const _,
-                fwmark.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "fwmark", &fwmark)
     }
 
     /// Whether to enable special handling of the IPv4 default route.
@@ -293,18 +386,15 @@ impl SettingWireGuard {
     ///
     /// Leaving this at the default will enable this option automatically
     /// if ipv4.never-default is not set and there are any peers that use
-    /// a default-route as allowed-ips.
+    /// a default-route as allowed-ips. Since this automatism only makes
+    /// sense if you also have a peer with an /0 allowed-ips, it is usually
+    /// not necessary to enable this explicitly. However, you can disable
+    /// it if you want to configure your own routing and rules.
     #[cfg(any(feature = "v1_20", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_20")))]
     #[doc(alias = "ip4-auto-default-route")]
     pub fn set_ip4_auto_default_route(&self, ip4_auto_default_route: Ternary) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"ip4-auto-default-route\0".as_ptr() as *const _,
-                ip4_auto_default_route.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "ip4-auto-default-route", &ip4_auto_default_route)
     }
 
     /// Like ip4-auto-default-route, but for the IPv6 default route.
@@ -312,13 +402,7 @@ impl SettingWireGuard {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_20")))]
     #[doc(alias = "ip6-auto-default-route")]
     pub fn set_ip6_auto_default_route(&self, ip6_auto_default_route: Ternary) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"ip6-auto-default-route\0".as_ptr() as *const _,
-                ip6_auto_default_route.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "ip6-auto-default-route", &ip6_auto_default_route)
     }
 
     /// The listen-port. If listen-port is not specified, the port will be chosen
@@ -327,13 +411,7 @@ impl SettingWireGuard {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_16")))]
     #[doc(alias = "listen-port")]
     pub fn set_listen_port(&self, listen_port: u32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"listen-port\0".as_ptr() as *const _,
-                listen_port.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "listen-port", &listen_port)
     }
 
     /// If non-zero, only transmit packets of the specified size or smaller,
@@ -345,13 +423,7 @@ impl SettingWireGuard {
     #[cfg(any(feature = "v1_16", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_16")))]
     pub fn set_mtu(&self, mtu: u32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"mtu\0".as_ptr() as *const _,
-                mtu.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "mtu", &mtu)
     }
 
     /// Whether to automatically add routes for the AllowedIPs ranges
@@ -369,13 +441,7 @@ impl SettingWireGuard {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_16")))]
     #[doc(alias = "peer-routes")]
     pub fn set_peer_routes(&self, peer_routes: bool) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"peer-routes\0".as_ptr() as *const _,
-                peer_routes.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "peer-routes", &peer_routes)
     }
 
     /// The 256 bit private-key in base64 encoding.
@@ -383,28 +449,16 @@ impl SettingWireGuard {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_16")))]
     #[doc(alias = "private-key")]
     pub fn set_private_key(&self, private_key: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"private-key\0".as_ptr() as *const _,
-                private_key.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "private-key", &private_key)
     }
 
-    /// Flags indicating how to handle the `property::SettingWirelessSecurity::private-key`
+    /// Flags indicating how to handle the [`private-key`][struct@crate::SettingWirelessSecurity#private-key]
     /// property.
     #[cfg(any(feature = "v1_16", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_16")))]
     #[doc(alias = "private-key-flags")]
     pub fn set_private_key_flags(&self, private_key_flags: SettingSecretFlags) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"private-key-flags\0".as_ptr() as *const _,
-                private_key_flags.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "private-key-flags", &private_key_flags)
     }
 
     #[cfg(any(feature = "v1_16", feature = "dox"))]

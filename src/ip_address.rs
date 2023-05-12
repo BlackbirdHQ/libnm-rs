@@ -46,7 +46,7 @@ impl IPAddress {
     }
 
     //#[doc(alias = "nm_ip_address_new_binary")]
-    //pub fn new_binary(family: i32, addr: /*Unimplemented*/Option<Fundamental: Pointer>, prefix: u32) -> Result<IPAddress, glib::Error> {
+    //pub fn new_binary(family: i32, addr: /*Unimplemented*/Option<Basic: Pointer>, prefix: u32) -> Result<IPAddress, glib::Error> {
     //    unsafe { TODO: call ffi:nm_ip_address_new_binary() }
     //}
 
@@ -88,18 +88,11 @@ impl IPAddress {
     #[cfg(any(feature = "v1_32", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_32")))]
     #[doc(alias = "nm_ip_address_dup")]
+    #[must_use]
     pub fn dup(&self) -> Option<IPAddress> {
         unsafe { from_glib_full(ffi::nm_ip_address_dup(self.to_glib_none().0)) }
     }
 
-    /// Determines if two [`IPAddress`][crate::IPAddress] objects contain the same address and prefix
-    /// (attributes are not compared).
-    /// ## `other`
-    /// the [`IPAddress`][crate::IPAddress] to compare `self` to.
-    ///
-    /// # Returns
-    ///
-    /// [`true`] if the objects contain the same values, [`false`] if they do not.
     #[doc(alias = "nm_ip_address_equal")]
     fn equal(&self, other: &IPAddress) -> bool {
         unsafe {
@@ -123,7 +116,7 @@ impl IPAddress {
 
     //#[doc(alias = "nm_ip_address_get_address_binary")]
     //#[doc(alias = "get_address_binary")]
-    //pub fn address_binary(&self, addr: /*Unimplemented*/Option<Fundamental: Pointer>) {
+    //pub fn address_binary(&self, addr: /*Unimplemented*/Option<Basic: Pointer>) {
     //    unsafe { TODO: call ffi:nm_ip_address_get_address_binary() }
     //}
 
@@ -184,7 +177,7 @@ impl IPAddress {
     }
 
     //#[doc(alias = "nm_ip_address_set_address_binary")]
-    //pub fn set_address_binary(&self, addr: /*Unimplemented*/Option<Fundamental: Pointer>) {
+    //pub fn set_address_binary(&self, addr: /*Unimplemented*/Option<Basic: Pointer>) {
     //    unsafe { TODO: call ffi:nm_ip_address_set_address_binary() }
     //}
 

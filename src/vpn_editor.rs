@@ -3,17 +3,25 @@
 // DO NOT EDIT
 
 use crate::Connection;
-use glib::object::Cast;
-use glib::object::IsA;
-use glib::signal::connect_raw;
-use glib::signal::SignalHandlerId;
-use glib::translate::*;
-use std::boxed::Box as Box_;
-use std::fmt;
-use std::mem::transmute;
-use std::ptr;
+use glib::{
+    prelude::*,
+    signal::{connect_raw, SignalHandlerId},
+    translate::*,
+};
+use std::{boxed::Box as Box_, fmt, mem::transmute, ptr};
 
 glib::wrapper! {
+    ///
+    ///
+    /// ## Signals
+    ///
+    ///
+    /// #### `changed`
+    ///
+    ///
+    /// # Implements
+    ///
+    /// [`VpnEditorExt`][trait@crate::prelude::VpnEditorExt]
     #[doc(alias = "NMVpnEditor")]
     pub struct VpnEditor(Interface<ffi::NMVpnEditor, ffi::NMVpnEditorInterface>);
 
@@ -22,7 +30,9 @@ glib::wrapper! {
     }
 }
 
-pub const NONE_VPN_EDITOR: Option<&VpnEditor> = None;
+impl VpnEditor {
+    pub const NONE: Option<&'static VpnEditor> = None;
+}
 
 /// Trait containing all [`struct@VpnEditor`] methods.
 ///
@@ -35,7 +45,7 @@ pub trait VpnEditorExt: 'static {
     fn widget(&self) -> Option<glib::Object>;
 
     #[doc(alias = "nm_vpn_editor_update_connection")]
-    fn update_connection<P: IsA<Connection>>(&self, connection: &P) -> Result<(), glib::Error>;
+    fn update_connection(&self, connection: &impl IsA<Connection>) -> Result<(), glib::Error>;
 
     #[doc(alias = "changed")]
     fn connect_changed<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId;
@@ -50,14 +60,15 @@ impl<O: IsA<VpnEditor>> VpnEditorExt for O {
         }
     }
 
-    fn update_connection<P: IsA<Connection>>(&self, connection: &P) -> Result<(), glib::Error> {
+    fn update_connection(&self, connection: &impl IsA<Connection>) -> Result<(), glib::Error> {
         unsafe {
             let mut error = ptr::null_mut();
-            let _ = ffi::nm_vpn_editor_update_connection(
+            let is_ok = ffi::nm_vpn_editor_update_connection(
                 self.as_ref().to_glib_none().0,
                 connection.as_ref().to_glib_none().0,
                 &mut error,
             );
+            debug_assert_eq!(is_ok == glib::ffi::GFALSE, !error.is_null());
             if error.is_null() {
                 Ok(())
             } else {

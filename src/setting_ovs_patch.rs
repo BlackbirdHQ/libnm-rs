@@ -3,17 +3,43 @@
 // DO NOT EDIT
 
 use crate::Setting;
-use glib::object::Cast;
-use glib::object::ObjectType as ObjectType_;
-use glib::signal::connect_raw;
-use glib::signal::SignalHandlerId;
-use glib::translate::*;
-use glib::ToValue;
-use std::boxed::Box as Box_;
+#[cfg(any(feature = "v1_10", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
+use glib::{
+    prelude::*,
+    signal::{connect_raw, SignalHandlerId},
+    translate::*,
+};
 use std::fmt;
-use std::mem::transmute;
+#[cfg(any(feature = "v1_10", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
+use std::{boxed::Box as Box_, mem::transmute};
 
 glib::wrapper! {
+    /// OvsPatch Link Settings
+    ///
+    /// ## Properties
+    ///
+    ///
+    /// #### `peer`
+    ///  Specifies the name of the interface for the other side of the patch.
+    /// The patch on the other side must also set this interface as peer.
+    ///
+    /// Readable | Writeable
+    /// <details><summary><h4>Setting</h4></summary>
+    ///
+    ///
+    /// #### `name`
+    ///  The setting's name, which uniquely identifies the setting within the
+    /// connection. Each setting type has a name unique to that type, for
+    /// example "ppp" or "802-11-wireless" or "802-3-ethernet".
+    ///
+    /// Readable
+    /// </details>
+    ///
+    /// # Implements
+    ///
+    /// [`SettingExt`][trait@crate::prelude::SettingExt], [`trait@glib::ObjectExt`]
     #[doc(alias = "NMSettingOvsPatch")]
     pub struct SettingOvsPatch(Object<ffi::NMSettingOvsPatch, ffi::NMSettingOvsPatchClass>) @extends Setting;
 
@@ -28,6 +54,8 @@ impl SettingOvsPatch {
     /// # Returns
     ///
     /// the new empty [`SettingOvsPatch`][crate::SettingOvsPatch] object
+    #[cfg(any(feature = "v1_10", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     #[doc(alias = "nm_setting_ovs_patch_new")]
     pub fn new() -> SettingOvsPatch {
         unsafe { Setting::from_glib_full(ffi::nm_setting_ovs_patch_new()).unsafe_cast() }
@@ -36,7 +64,9 @@ impl SettingOvsPatch {
     ///
     /// # Returns
     ///
-    /// the `property::SettingOvsPatch::peer` property of the setting
+    /// the [`peer`][struct@crate::SettingOvsPatch#peer] property of the setting
+    #[cfg(any(feature = "v1_10", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     #[doc(alias = "nm_setting_ovs_patch_get_peer")]
     #[doc(alias = "get_peer")]
     pub fn peer(&self) -> Option<glib::GString> {
@@ -48,13 +78,7 @@ impl SettingOvsPatch {
     #[cfg(any(feature = "v1_10", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     pub fn set_peer(&self, peer: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"peer\0".as_ptr() as *const _,
-                peer.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "peer", &peer)
     }
 
     #[cfg(any(feature = "v1_10", feature = "dox"))]

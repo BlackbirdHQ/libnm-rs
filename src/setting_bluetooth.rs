@@ -3,18 +3,44 @@
 // DO NOT EDIT
 
 use crate::Setting;
-use glib::object::Cast;
-use glib::object::ObjectType as ObjectType_;
-use glib::signal::connect_raw;
-use glib::signal::SignalHandlerId;
-use glib::translate::*;
-use glib::StaticType;
-use glib::ToValue;
-use std::boxed::Box as Box_;
-use std::fmt;
-use std::mem::transmute;
+use glib::{
+    prelude::*,
+    signal::{connect_raw, SignalHandlerId},
+    translate::*,
+};
+use std::{boxed::Box as Box_, fmt, mem::transmute};
 
 glib::wrapper! {
+    /// Bluetooth Settings
+    ///
+    /// ## Properties
+    ///
+    ///
+    /// #### `bdaddr`
+    ///  The Bluetooth address of the device.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `type`
+    ///  Either "dun" for Dial-Up Networking connections or "panu" for Personal
+    /// Area Networking connections to devices supporting the NAP profile.
+    ///
+    /// Readable | Writeable
+    /// <details><summary><h4>Setting</h4></summary>
+    ///
+    ///
+    /// #### `name`
+    ///  The setting's name, which uniquely identifies the setting within the
+    /// connection. Each setting type has a name unique to that type, for
+    /// example "ppp" or "802-11-wireless" or "802-3-ethernet".
+    ///
+    /// Readable
+    /// </details>
+    ///
+    /// # Implements
+    ///
+    /// [`SettingExt`][trait@crate::prelude::SettingExt], [`trait@glib::ObjectExt`]
     #[doc(alias = "NMSettingBluetooth")]
     pub struct SettingBluetooth(Object<ffi::NMSettingBluetooth, ffi::NMSettingBluetoothClass>) @extends Setting;
 
@@ -65,43 +91,21 @@ impl SettingBluetooth {
 
     /// The Bluetooth address of the device.
     pub fn set_bdaddr(&self, bdaddr: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"bdaddr\0".as_ptr() as *const _,
-                bdaddr.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "bdaddr", &bdaddr)
     }
 
     /// Either "dun" for Dial-Up Networking connections or "panu" for Personal
     /// Area Networking connections to devices supporting the NAP profile.
     #[doc(alias = "type")]
     pub fn type_(&self) -> Option<glib::GString> {
-        unsafe {
-            let mut value = glib::Value::from_type(<glib::GString as StaticType>::static_type());
-            glib::gobject_ffi::g_object_get_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"type\0".as_ptr() as *const _,
-                value.to_glib_none_mut().0,
-            );
-            value
-                .get()
-                .expect("Return Value for property `type` getter")
-        }
+        glib::ObjectExt::property(self, "type")
     }
 
     /// Either "dun" for Dial-Up Networking connections or "panu" for Personal
     /// Area Networking connections to devices supporting the NAP profile.
     #[doc(alias = "type")]
     pub fn set_type(&self, type_: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"type\0".as_ptr() as *const _,
-                type_.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "type", &type_)
     }
 
     #[doc(alias = "bdaddr")]

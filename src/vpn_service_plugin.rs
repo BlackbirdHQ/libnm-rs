@@ -2,27 +2,76 @@
 // from gir-files
 // DO NOT EDIT
 
-use crate::VpnPluginFailure;
-#[cfg(any(feature = "v1_2", feature = "dox"))]
-#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
-use crate::VpnServiceState;
-use glib::object::Cast;
-use glib::object::IsA;
-use glib::signal::connect_raw;
-use glib::signal::SignalHandlerId;
-use glib::translate::*;
-#[cfg(any(feature = "v1_2", feature = "dox"))]
-#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
-use glib::StaticType;
-#[cfg(any(feature = "v1_2", feature = "dox"))]
-#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
-use glib::ToValue;
-use std::boxed::Box as Box_;
-use std::fmt;
-use std::mem::transmute;
-use std::ptr;
+use crate::{VpnPluginFailure, VpnServiceState};
+use glib::{
+    prelude::*,
+    signal::{connect_raw, SignalHandlerId},
+    translate::*,
+};
+use std::{boxed::Box as Box_, fmt, mem::transmute, ptr};
 
 glib::wrapper! {
+    ///
+    ///
+    /// This is an Abstract Base Class, you cannot instantiate it.
+    ///
+    /// ## Properties
+    ///
+    ///
+    /// #### `service-name`
+    ///  The D-Bus service name of this plugin.
+    ///
+    /// Readable | Writeable | Construct Only
+    ///
+    ///
+    /// #### `state`
+    ///  The state of the plugin.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `watch-peer`
+    ///  Whether to watch for D-Bus peer's changes.
+    ///
+    /// Readable | Writeable | Construct Only
+    ///
+    /// ## Signals
+    ///
+    ///
+    /// #### `config`
+    ///
+    ///
+    ///
+    /// #### `failure`
+    ///
+    ///
+    ///
+    /// #### `ip4-config`
+    ///
+    ///
+    ///
+    /// #### `ip6-config`
+    ///
+    ///
+    ///
+    /// #### `login-banner`
+    ///
+    ///
+    ///
+    /// #### `quit`
+    ///
+    ///
+    ///
+    /// #### `secrets-required`
+    ///
+    ///
+    ///
+    /// #### `state-changed`
+    ///
+    ///
+    /// # Implements
+    ///
+    /// [`VpnServicePluginExt`][trait@crate::prelude::VpnServicePluginExt], [`trait@glib::ObjectExt`]
     #[doc(alias = "NMVpnServicePlugin")]
     pub struct VpnServicePlugin(Object<ffi::NMVpnServicePlugin, ffi::NMVpnServicePluginClass>);
 
@@ -32,23 +81,19 @@ glib::wrapper! {
 }
 
 impl VpnServicePlugin {
-    //#[cfg(any(feature = "v1_2", feature = "dox"))]
-    //#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
+    pub const NONE: Option<&'static VpnServicePlugin> = None;
+
     //#[doc(alias = "nm_vpn_service_plugin_get_secret_flags")]
     //#[doc(alias = "get_secret_flags")]
     //pub fn secret_flags(data: /*Unknown conversion*//*Unimplemented*/HashTable TypeId { ns_id: 0, id: 25 }/TypeId { ns_id: 0, id: 25 }, secret_name: &str) -> Option<SettingSecretFlags> {
     //    unsafe { TODO: call ffi:nm_vpn_service_plugin_get_secret_flags() }
     //}
 
-    //#[cfg(any(feature = "v1_2", feature = "dox"))]
-    //#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     //#[doc(alias = "nm_vpn_service_plugin_read_vpn_details")]
     //pub fn read_vpn_details(fd: i32, out_data: /*Unknown conversion*//*Unimplemented*/HashTable TypeId { ns_id: 0, id: 25 }/TypeId { ns_id: 0, id: 25 }, out_secrets: /*Unknown conversion*//*Unimplemented*/HashTable TypeId { ns_id: 0, id: 25 }/TypeId { ns_id: 0, id: 25 }) -> bool {
     //    unsafe { TODO: call ffi:nm_vpn_service_plugin_read_vpn_details() }
     //}
 }
-
-pub const NONE_VPN_SERVICE_PLUGIN: Option<&VpnServicePlugin> = None;
 
 /// Trait containing all [`struct@VpnServicePlugin`] methods.
 ///
@@ -62,8 +107,6 @@ pub trait VpnServicePluginExt: 'static {
     #[doc(alias = "nm_vpn_service_plugin_failure")]
     fn failure(&self, reason: VpnPluginFailure);
 
-    #[cfg(any(feature = "v1_2", feature = "dox"))]
-    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     #[doc(alias = "nm_vpn_service_plugin_get_connection")]
     #[doc(alias = "get_connection")]
     fn connection(&self) -> Option<gio::DBusConnection>;
@@ -147,8 +190,9 @@ impl<O: IsA<VpnServicePlugin>> VpnServicePluginExt for O {
     fn disconnect(&self) -> Result<(), glib::Error> {
         unsafe {
             let mut error = ptr::null_mut();
-            let _ =
+            let is_ok =
                 ffi::nm_vpn_service_plugin_disconnect(self.as_ref().to_glib_none().0, &mut error);
+            debug_assert_eq!(is_ok == glib::ffi::GFALSE, !error.is_null());
             if error.is_null() {
                 Ok(())
             } else {
@@ -163,8 +207,6 @@ impl<O: IsA<VpnServicePlugin>> VpnServicePluginExt for O {
         }
     }
 
-    #[cfg(any(feature = "v1_2", feature = "dox"))]
-    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     fn connection(&self) -> Option<gio::DBusConnection> {
         unsafe {
             from_glib_full(ffi::nm_vpn_service_plugin_get_connection(
@@ -220,61 +262,25 @@ impl<O: IsA<VpnServicePlugin>> VpnServicePluginExt for O {
     #[cfg(any(feature = "v1_2", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     fn service_name(&self) -> Option<glib::GString> {
-        unsafe {
-            let mut value = glib::Value::from_type(<glib::GString as StaticType>::static_type());
-            glib::gobject_ffi::g_object_get_property(
-                self.to_glib_none().0 as *mut glib::gobject_ffi::GObject,
-                b"service-name\0".as_ptr() as *const _,
-                value.to_glib_none_mut().0,
-            );
-            value
-                .get()
-                .expect("Return Value for property `service-name` getter")
-        }
+        glib::ObjectExt::property(self.as_ref(), "service-name")
     }
 
     #[cfg(any(feature = "v1_2", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     fn state(&self) -> VpnServiceState {
-        unsafe {
-            let mut value = glib::Value::from_type(<VpnServiceState as StaticType>::static_type());
-            glib::gobject_ffi::g_object_get_property(
-                self.to_glib_none().0 as *mut glib::gobject_ffi::GObject,
-                b"state\0".as_ptr() as *const _,
-                value.to_glib_none_mut().0,
-            );
-            value
-                .get()
-                .expect("Return Value for property `state` getter")
-        }
+        glib::ObjectExt::property(self.as_ref(), "state")
     }
 
     #[cfg(any(feature = "v1_2", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     fn set_state(&self, state: VpnServiceState) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.to_glib_none().0 as *mut glib::gobject_ffi::GObject,
-                b"state\0".as_ptr() as *const _,
-                state.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self.as_ref(), "state", &state)
     }
 
     #[cfg(any(feature = "v1_2", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     fn is_watch_peer(&self) -> bool {
-        unsafe {
-            let mut value = glib::Value::from_type(<bool as StaticType>::static_type());
-            glib::gobject_ffi::g_object_get_property(
-                self.to_glib_none().0 as *mut glib::gobject_ffi::GObject,
-                b"watch-peer\0".as_ptr() as *const _,
-                value.to_glib_none_mut().0,
-            );
-            value
-                .get()
-                .expect("Return Value for property `watch-peer` getter")
-        }
+        glib::ObjectExt::property(self.as_ref(), "watch-peer")
     }
 
     fn connect_config<F: Fn(&Self, &glib::Variant) + 'static>(&self, f: F) -> SignalHandlerId {

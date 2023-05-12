@@ -2,24 +2,43 @@
 // from gir-files
 // DO NOT EDIT
 
-use crate::Connection;
-use crate::VpnEditor;
-use crate::VpnEditorPluginCapability;
 #[cfg(any(feature = "v1_4", feature = "dox"))]
 #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_4")))]
 use crate::VpnPluginInfo;
-use glib::object::Cast;
-use glib::object::IsA;
-use glib::signal::connect_raw;
-use glib::signal::SignalHandlerId;
-use glib::translate::*;
-use glib::StaticType;
-use std::boxed::Box as Box_;
-use std::fmt;
-use std::mem::transmute;
-use std::ptr;
+use crate::{Connection, VpnEditor, VpnEditorPluginCapability};
+use glib::{
+    prelude::*,
+    signal::{connect_raw, SignalHandlerId},
+    translate::*,
+};
+use std::{boxed::Box as Box_, fmt, mem::transmute, ptr};
 
 glib::wrapper! {
+    ///
+    ///
+    /// ## Properties
+    ///
+    ///
+    /// #### `description`
+    ///  Longer description of the VPN plugin.
+    ///
+    /// Readable
+    ///
+    ///
+    /// #### `name`
+    ///  Short display name of the VPN plugin.
+    ///
+    /// Readable
+    ///
+    ///
+    /// #### `service`
+    ///  D-Bus service name of the plugin's VPN service.
+    ///
+    /// Readable
+    ///
+    /// # Implements
+    ///
+    /// [`VpnEditorPluginExt`][trait@crate::prelude::VpnEditorPluginExt]
     #[doc(alias = "NMVpnEditorPlugin")]
     pub struct VpnEditorPlugin(Interface<ffi::NMVpnEditorPlugin, ffi::NMVpnEditorPluginInterface>);
 
@@ -29,6 +48,8 @@ glib::wrapper! {
 }
 
 impl VpnEditorPlugin {
+    pub const NONE: Option<&'static VpnEditorPlugin> = None;
+
     /// Load the shared library `plugin_name` and create a new
     /// [`VpnEditorPlugin`][crate::VpnEditorPlugin] instance via the `NMVpnEditorPluginFactory`
     /// function.
@@ -75,8 +96,6 @@ impl VpnEditorPlugin {
     //}
 }
 
-pub const NONE_VPN_EDITOR_PLUGIN: Option<&VpnEditorPlugin> = None;
-
 /// Trait containing all [`struct@VpnEditorPlugin`] methods.
 ///
 /// # Implementors
@@ -84,7 +103,7 @@ pub const NONE_VPN_EDITOR_PLUGIN: Option<&VpnEditorPlugin> = None;
 /// [`VpnEditorPlugin`][struct@crate::VpnEditorPlugin]
 pub trait VpnEditorPluginExt: 'static {
     #[doc(alias = "nm_vpn_editor_plugin_export")]
-    fn export<P: IsA<Connection>>(&self, path: &str, connection: &P) -> Result<(), glib::Error>;
+    fn export(&self, path: &str, connection: &impl IsA<Connection>) -> Result<(), glib::Error>;
 
     #[doc(alias = "nm_vpn_editor_plugin_get_capabilities")]
     #[doc(alias = "get_capabilities")]
@@ -98,7 +117,7 @@ pub trait VpnEditorPluginExt: 'static {
     /// a new [`VpnEditor`][crate::VpnEditor] or [`None`] on error
     #[doc(alias = "nm_vpn_editor_plugin_get_editor")]
     #[doc(alias = "get_editor")]
-    fn editor<P: IsA<Connection>>(&self, connection: &P) -> Result<VpnEditor, glib::Error>;
+    fn editor(&self, connection: &impl IsA<Connection>) -> Result<VpnEditor, glib::Error>;
 
     ///
     /// # Returns
@@ -112,7 +131,7 @@ pub trait VpnEditorPluginExt: 'static {
 
     #[doc(alias = "nm_vpn_editor_plugin_get_suggested_filename")]
     #[doc(alias = "get_suggested_filename")]
-    fn suggested_filename<P: IsA<Connection>>(&self, connection: &P) -> Option<glib::GString>;
+    fn suggested_filename(&self, connection: &impl IsA<Connection>) -> Option<glib::GString>;
 
     //#[cfg(any(feature = "v1_4", feature = "dox"))]
     //#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_4")))]
@@ -160,15 +179,16 @@ pub trait VpnEditorPluginExt: 'static {
 }
 
 impl<O: IsA<VpnEditorPlugin>> VpnEditorPluginExt for O {
-    fn export<P: IsA<Connection>>(&self, path: &str, connection: &P) -> Result<(), glib::Error> {
+    fn export(&self, path: &str, connection: &impl IsA<Connection>) -> Result<(), glib::Error> {
         unsafe {
             let mut error = ptr::null_mut();
-            let _ = ffi::nm_vpn_editor_plugin_export(
+            let is_ok = ffi::nm_vpn_editor_plugin_export(
                 self.as_ref().to_glib_none().0,
                 path.to_glib_none().0,
                 connection.as_ref().to_glib_none().0,
                 &mut error,
             );
+            debug_assert_eq!(is_ok == glib::ffi::GFALSE, !error.is_null());
             if error.is_null() {
                 Ok(())
             } else {
@@ -185,7 +205,7 @@ impl<O: IsA<VpnEditorPlugin>> VpnEditorPluginExt for O {
         }
     }
 
-    fn editor<P: IsA<Connection>>(&self, connection: &P) -> Result<VpnEditor, glib::Error> {
+    fn editor(&self, connection: &impl IsA<Connection>) -> Result<VpnEditor, glib::Error> {
         unsafe {
             let mut error = ptr::null_mut();
             let ret = ffi::nm_vpn_editor_plugin_get_editor(
@@ -211,7 +231,7 @@ impl<O: IsA<VpnEditorPlugin>> VpnEditorPluginExt for O {
         }
     }
 
-    fn suggested_filename<P: IsA<Connection>>(&self, connection: &P) -> Option<glib::GString> {
+    fn suggested_filename(&self, connection: &impl IsA<Connection>) -> Option<glib::GString> {
         unsafe {
             from_glib_full(ffi::nm_vpn_editor_plugin_get_suggested_filename(
                 self.as_ref().to_glib_none().0,
@@ -254,45 +274,15 @@ impl<O: IsA<VpnEditorPlugin>> VpnEditorPluginExt for O {
     }
 
     fn description(&self) -> Option<glib::GString> {
-        unsafe {
-            let mut value = glib::Value::from_type(<glib::GString as StaticType>::static_type());
-            glib::gobject_ffi::g_object_get_property(
-                self.to_glib_none().0 as *mut glib::gobject_ffi::GObject,
-                b"description\0".as_ptr() as *const _,
-                value.to_glib_none_mut().0,
-            );
-            value
-                .get()
-                .expect("Return Value for property `description` getter")
-        }
+        glib::ObjectExt::property(self.as_ref(), "description")
     }
 
     fn name(&self) -> Option<glib::GString> {
-        unsafe {
-            let mut value = glib::Value::from_type(<glib::GString as StaticType>::static_type());
-            glib::gobject_ffi::g_object_get_property(
-                self.to_glib_none().0 as *mut glib::gobject_ffi::GObject,
-                b"name\0".as_ptr() as *const _,
-                value.to_glib_none_mut().0,
-            );
-            value
-                .get()
-                .expect("Return Value for property `name` getter")
-        }
+        glib::ObjectExt::property(self.as_ref(), "name")
     }
 
     fn service(&self) -> Option<glib::GString> {
-        unsafe {
-            let mut value = glib::Value::from_type(<glib::GString as StaticType>::static_type());
-            glib::gobject_ffi::g_object_get_property(
-                self.to_glib_none().0 as *mut glib::gobject_ffi::GObject,
-                b"service\0".as_ptr() as *const _,
-                value.to_glib_none_mut().0,
-            );
-            value
-                .get()
-                .expect("Return Value for property `service` getter")
-        }
+        glib::ObjectExt::property(self.as_ref(), "service")
     }
 
     fn connect_description_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId {

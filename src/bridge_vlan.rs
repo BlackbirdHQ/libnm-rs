@@ -7,10 +7,7 @@
 use glib::translate::*;
 #[cfg(any(feature = "v1_18", feature = "dox"))]
 #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_18")))]
-use std::mem;
-#[cfg(any(feature = "v1_18", feature = "dox"))]
-#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_18")))]
-use std::ptr;
+use std::{mem, ptr};
 
 glib::wrapper! {
     #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -35,6 +32,8 @@ impl BridgeVlan {
     /// # Returns
     ///
     /// the new [`BridgeVlan`][crate::BridgeVlan] object.
+    #[cfg(any(feature = "v1_18", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_18")))]
     #[doc(alias = "nm_bridge_vlan_new")]
     pub fn new(vid_start: u16, vid_end: u16) -> BridgeVlan {
         unsafe { from_glib_full(ffi::nm_bridge_vlan_new(vid_start, vid_end)) }
@@ -50,6 +49,8 @@ impl BridgeVlan {
     ///  a non-zero integer otherwise. This defines a total ordering
     ///  over the VLANs. Whether a VLAN is sealed or not does not
     ///  affect the comparison.
+    #[cfg(any(feature = "v1_18", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_18")))]
     #[doc(alias = "nm_bridge_vlan_cmp")]
     pub fn cmp(&self, b: &BridgeVlan) -> i32 {
         unsafe { ffi::nm_bridge_vlan_cmp(self.to_glib_none().0, b.to_glib_none().0) }
@@ -67,6 +68,8 @@ impl BridgeVlan {
     ///
     /// ## `vid_end`
     /// location to store the VLAN id range end
+    #[cfg(any(feature = "v1_18", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_18")))]
     #[doc(alias = "nm_bridge_vlan_get_vid_range")]
     #[doc(alias = "get_vid_range")]
     pub fn vid_range(&self) -> Option<(u16, u16)> {
@@ -78,10 +81,8 @@ impl BridgeVlan {
                 vid_start.as_mut_ptr(),
                 vid_end.as_mut_ptr(),
             ));
-            let vid_start = vid_start.assume_init();
-            let vid_end = vid_end.assume_init();
             if ret {
-                Some((vid_start, vid_end))
+                Some((vid_start.assume_init(), vid_end.assume_init()))
             } else {
                 None
             }
@@ -93,6 +94,8 @@ impl BridgeVlan {
     /// # Returns
     ///
     /// [`true`] if the VLAN is the PVID
+    #[cfg(any(feature = "v1_18", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_18")))]
     #[doc(alias = "nm_bridge_vlan_is_pvid")]
     pub fn is_pvid(&self) -> bool {
         unsafe { from_glib(ffi::nm_bridge_vlan_is_pvid(self.to_glib_none().0)) }
@@ -102,6 +105,8 @@ impl BridgeVlan {
     /// # Returns
     ///
     /// whether `self_` is sealed or not.
+    #[cfg(any(feature = "v1_18", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_18")))]
     #[doc(alias = "nm_bridge_vlan_is_sealed")]
     pub fn is_sealed(&self) -> bool {
         unsafe { from_glib(ffi::nm_bridge_vlan_is_sealed(self.to_glib_none().0)) }
@@ -112,6 +117,8 @@ impl BridgeVlan {
     /// # Returns
     ///
     /// [`true`] if the VLAN is untagged, [`false`] otherwise
+    #[cfg(any(feature = "v1_18", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_18")))]
     #[doc(alias = "nm_bridge_vlan_is_untagged")]
     pub fn is_untagged(&self) -> bool {
         unsafe { from_glib(ffi::nm_bridge_vlan_is_untagged(self.to_glib_none().0)) }
@@ -122,7 +129,10 @@ impl BridgeVlan {
     ///
     /// a clone of `self`. This instance
     ///  is always unsealed.
+    #[cfg(any(feature = "v1_18", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_18")))]
     #[doc(alias = "nm_bridge_vlan_new_clone")]
+    #[must_use]
     pub fn new_clone(&self) -> Option<BridgeVlan> {
         unsafe { from_glib_full(ffi::nm_bridge_vlan_new_clone(self.to_glib_none().0)) }
     }
@@ -131,6 +141,8 @@ impl BridgeVlan {
     /// to call all functions that modify the instance (except ref/unref).
     /// A sealed instance cannot be unsealed again, but you can create
     /// an unsealed copy with [`new_clone()`][Self::new_clone()].
+    #[cfg(any(feature = "v1_18", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_18")))]
     #[doc(alias = "nm_bridge_vlan_seal")]
     pub fn seal(&self) {
         unsafe {
@@ -143,6 +155,8 @@ impl BridgeVlan {
     /// VLANs.
     /// ## `value`
     /// the new value
+    #[cfg(any(feature = "v1_18", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_18")))]
     #[doc(alias = "nm_bridge_vlan_set_pvid")]
     pub fn set_pvid(&self, value: bool) {
         unsafe {
@@ -153,6 +167,8 @@ impl BridgeVlan {
     /// Change the value of the untagged property of the VLAN.
     /// ## `value`
     /// the new value
+    #[cfg(any(feature = "v1_18", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_18")))]
     #[doc(alias = "nm_bridge_vlan_set_untagged")]
     pub fn set_untagged(&self, value: bool) {
         unsafe {
@@ -165,6 +181,8 @@ impl BridgeVlan {
     /// # Returns
     ///
     /// formatted string or [`None`]
+    #[cfg(any(feature = "v1_18", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_18")))]
     #[doc(alias = "nm_bridge_vlan_to_str")]
     pub fn to_str(&self) -> Result<glib::GString, glib::Error> {
         unsafe {
@@ -186,6 +204,8 @@ impl BridgeVlan {
     /// # Returns
     ///
     /// the `NMBridgeVlan` or [`None`]
+    #[cfg(any(feature = "v1_18", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_18")))]
     #[doc(alias = "nm_bridge_vlan_from_str")]
     pub fn from_str(str: &str) -> Result<BridgeVlan, glib::Error> {
         unsafe {

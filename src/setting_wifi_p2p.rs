@@ -2,19 +2,59 @@
 // from gir-files
 // DO NOT EDIT
 
-use crate::Setting;
-use crate::SettingWirelessSecurityWpsMethod;
-use glib::object::Cast;
-use glib::object::ObjectType as ObjectType_;
-use glib::signal::connect_raw;
-use glib::signal::SignalHandlerId;
-use glib::translate::*;
-use glib::ToValue;
-use std::boxed::Box as Box_;
-use std::fmt;
-use std::mem::transmute;
+use crate::{Setting, SettingWirelessSecurityWpsMethod};
+use glib::{
+    prelude::*,
+    signal::{connect_raw, SignalHandlerId},
+    translate::*,
+};
+use std::{boxed::Box as Box_, fmt, mem::transmute};
 
 glib::wrapper! {
+    /// Wi-Fi P2P Settings
+    ///
+    /// ## Properties
+    ///
+    ///
+    /// #### `peer`
+    ///  The P2P device that should be connected to. Currently, this is the only
+    /// way to create or join a group.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `wfd-ies`
+    ///  The Wi-Fi Display (WFD) Information Elements (IEs) to set.
+    ///
+    /// Wi-Fi Display requires a protocol specific information element to be
+    /// set in certain Wi-Fi frames. These can be specified here for the
+    /// purpose of establishing a connection.
+    /// This setting is only useful when implementing a Wi-Fi Display client.
+    ///
+    /// Readable | Writeable
+    ///
+    ///
+    /// #### `wps-method`
+    ///  Flags indicating which mode of WPS is to be used.
+    ///
+    /// There's little point in changing the default setting as NetworkManager will
+    /// automatically determine the best method to use.
+    ///
+    /// Readable | Writeable
+    /// <details><summary><h4>Setting</h4></summary>
+    ///
+    ///
+    /// #### `name`
+    ///  The setting's name, which uniquely identifies the setting within the
+    /// connection. Each setting type has a name unique to that type, for
+    /// example "ppp" or "802-11-wireless" or "802-3-ethernet".
+    ///
+    /// Readable
+    /// </details>
+    ///
+    /// # Implements
+    ///
+    /// [`SettingExt`][trait@crate::prelude::SettingExt], [`trait@glib::ObjectExt`]
     #[doc(alias = "NMSettingWifiP2P")]
     pub struct SettingWifiP2P(Object<ffi::NMSettingWifiP2P, ffi::NMSettingWifiP2PClass>) @extends Setting;
 
@@ -37,7 +77,7 @@ impl SettingWifiP2P {
     ///
     /// # Returns
     ///
-    /// the `property::SettingWifiP2P::peer` property of the setting
+    /// the [`peer`][struct@crate::SettingWifiP2P#peer] property of the setting
     #[doc(alias = "nm_setting_wifi_p2p_get_peer")]
     #[doc(alias = "get_peer")]
     pub fn peer(&self) -> Option<glib::GString> {
@@ -57,7 +97,7 @@ impl SettingWifiP2P {
     ///
     /// # Returns
     ///
-    /// the `property::SettingWifiP2P::wps-method` property of the setting
+    /// the [`wps-method`][struct@crate::SettingWifiP2P#wps-method] property of the setting
     #[doc(alias = "nm_setting_wifi_p2p_get_wps_method")]
     #[doc(alias = "get_wps_method")]
     pub fn wps_method(&self) -> SettingWirelessSecurityWpsMethod {
@@ -73,13 +113,7 @@ impl SettingWifiP2P {
     #[cfg(any(feature = "v1_16", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_16")))]
     pub fn set_peer(&self, peer: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"peer\0".as_ptr() as *const _,
-                peer.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "peer", &peer)
     }
 
     /// The Wi-Fi Display (WFD) Information Elements (IEs) to set.
@@ -92,13 +126,7 @@ impl SettingWifiP2P {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_16")))]
     #[doc(alias = "wfd-ies")]
     pub fn set_wfd_ies(&self, wfd_ies: Option<&glib::Bytes>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"wfd-ies\0".as_ptr() as *const _,
-                wfd_ies.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "wfd-ies", &wfd_ies)
     }
 
     /// Flags indicating which mode of WPS is to be used.
@@ -109,13 +137,7 @@ impl SettingWifiP2P {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_16")))]
     #[doc(alias = "wps-method")]
     pub fn set_wps_method(&self, wps_method: u32) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"wps-method\0".as_ptr() as *const _,
-                wps_method.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "wps-method", &wps_method)
     }
 
     #[cfg(any(feature = "v1_16", feature = "dox"))]

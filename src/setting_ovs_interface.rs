@@ -3,18 +3,42 @@
 // DO NOT EDIT
 
 use crate::Setting;
-use glib::object::Cast;
-use glib::object::ObjectType as ObjectType_;
-use glib::signal::connect_raw;
-use glib::signal::SignalHandlerId;
-use glib::translate::*;
-use glib::StaticType;
-use glib::ToValue;
-use std::boxed::Box as Box_;
+#[cfg(any(feature = "v1_10", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
+use glib::{
+    prelude::*,
+    signal::{connect_raw, SignalHandlerId},
+    translate::*,
+};
 use std::fmt;
-use std::mem::transmute;
+#[cfg(any(feature = "v1_10", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
+use std::{boxed::Box as Box_, mem::transmute};
 
 glib::wrapper! {
+    /// Open vSwitch Interface Settings
+    ///
+    /// ## Properties
+    ///
+    ///
+    /// #### `type`
+    ///  The interface type. Either "internal", "system", "patch", "dpdk", or empty.
+    ///
+    /// Readable | Writeable
+    /// <details><summary><h4>Setting</h4></summary>
+    ///
+    ///
+    /// #### `name`
+    ///  The setting's name, which uniquely identifies the setting within the
+    /// connection. Each setting type has a name unique to that type, for
+    /// example "ppp" or "802-11-wireless" or "802-3-ethernet".
+    ///
+    /// Readable
+    /// </details>
+    ///
+    /// # Implements
+    ///
+    /// [`SettingExt`][trait@crate::prelude::SettingExt], [`trait@glib::ObjectExt`]
     #[doc(alias = "NMSettingOvsInterface")]
     pub struct SettingOvsInterface(Object<ffi::NMSettingOvsInterface, ffi::NMSettingOvsInterfaceClass>) @extends Setting;
 
@@ -29,6 +53,8 @@ impl SettingOvsInterface {
     /// # Returns
     ///
     /// the new empty [`SettingOvsInterface`][crate::SettingOvsInterface] object
+    #[cfg(any(feature = "v1_10", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     #[doc(alias = "nm_setting_ovs_interface_new")]
     pub fn new() -> SettingOvsInterface {
         unsafe { Setting::from_glib_full(ffi::nm_setting_ovs_interface_new()).unsafe_cast() }
@@ -37,7 +63,9 @@ impl SettingOvsInterface {
     ///
     /// # Returns
     ///
-    /// the `property::SettingOvsInterface::type` property of the setting
+    /// the [`type`][struct@crate::SettingOvsInterface#type] property of the setting
+    #[cfg(any(feature = "v1_10", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     #[doc(alias = "nm_setting_ovs_interface_get_interface_type")]
     #[doc(alias = "get_interface_type")]
     pub fn interface_type(&self) -> Option<glib::GString> {
@@ -53,17 +81,7 @@ impl SettingOvsInterface {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     #[doc(alias = "type")]
     pub fn type_(&self) -> Option<glib::GString> {
-        unsafe {
-            let mut value = glib::Value::from_type(<glib::GString as StaticType>::static_type());
-            glib::gobject_ffi::g_object_get_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"type\0".as_ptr() as *const _,
-                value.to_glib_none_mut().0,
-            );
-            value
-                .get()
-                .expect("Return Value for property `type` getter")
-        }
+        glib::ObjectExt::property(self, "type")
     }
 
     /// The interface type. Either "internal", "system", "patch", "dpdk", or empty.
@@ -71,13 +89,7 @@ impl SettingOvsInterface {
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_10")))]
     #[doc(alias = "type")]
     pub fn set_type(&self, type_: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"type\0".as_ptr() as *const _,
-                type_.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "type", &type_)
     }
 
     #[cfg(any(feature = "v1_10", feature = "dox"))]

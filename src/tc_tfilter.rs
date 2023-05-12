@@ -2,8 +2,8 @@
 // from gir-files
 // DO NOT EDIT
 
-#[cfg(any(feature = "v1_12", feature = "dox"))]
-#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
+#[cfg(any(feature = "v1_42", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_42")))]
 use crate::TCAction;
 #[cfg(any(feature = "v1_12", feature = "dox"))]
 #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
@@ -33,6 +33,8 @@ impl TCTfilter {
     /// # Returns
     ///
     /// the new [`TCTfilter`][crate::TCTfilter] object, or [`None`] on error
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_tc_tfilter_new")]
     pub fn new(kind: &str, parent: u32) -> Result<TCTfilter, glib::Error> {
         unsafe {
@@ -51,19 +53,16 @@ impl TCTfilter {
     /// # Returns
     ///
     /// a copy of `self`
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_tc_tfilter_dup")]
+    #[must_use]
     pub fn dup(&self) -> Option<TCTfilter> {
         unsafe { from_glib_full(ffi::nm_tc_tfilter_dup(self.to_glib_none().0)) }
     }
 
-    /// Determines if two [`TCTfilter`][crate::TCTfilter] objects contain the same kind, family,
-    /// handle, parent and info.
-    /// ## `other`
-    /// the [`TCTfilter`][crate::TCTfilter] to compare `self` to.
-    ///
-    /// # Returns
-    ///
-    /// [`true`] if the objects contain the same values, [`false`] if they do not.
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_tc_tfilter_equal")]
     fn equal(&self, other: &TCTfilter) -> bool {
         unsafe {
@@ -78,6 +77,8 @@ impl TCTfilter {
     /// # Returns
     ///
     /// the action associated with a traffic filter.
+    #[cfg(any(feature = "v1_42", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_42")))]
     #[doc(alias = "nm_tc_tfilter_get_action")]
     #[doc(alias = "get_action")]
     pub fn action(&self) -> Option<TCAction> {
@@ -88,12 +89,16 @@ impl TCTfilter {
     /// # Returns
     ///
     /// the queueing discipline handle
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_tc_tfilter_get_handle")]
     #[doc(alias = "get_handle")]
     pub fn handle(&self) -> u32 {
         unsafe { ffi::nm_tc_tfilter_get_handle(self.to_glib_none().0) }
     }
 
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_tc_tfilter_get_kind")]
     #[doc(alias = "get_kind")]
     pub fn kind(&self) -> Option<glib::GString> {
@@ -104,6 +109,8 @@ impl TCTfilter {
     /// # Returns
     ///
     /// the parent class
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_tc_tfilter_get_parent")]
     #[doc(alias = "get_parent")]
     pub fn parent(&self) -> u32 {
@@ -113,6 +120,8 @@ impl TCTfilter {
     /// Sets the action associated with a traffic filter.
     /// ## `action`
     /// the action object
+    #[cfg(any(feature = "v1_42", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_42")))]
     #[doc(alias = "nm_tc_tfilter_set_action")]
     pub fn set_action(&self, action: &TCAction) {
         unsafe {
@@ -123,6 +132,8 @@ impl TCTfilter {
     /// Sets the queueing discipline handle.
     /// ## `handle`
     /// the queueing discipline handle
+    #[cfg(any(feature = "v1_12", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
     #[doc(alias = "nm_tc_tfilter_set_handle")]
     pub fn set_handle(&self, handle: u32) {
         unsafe {
@@ -131,6 +142,8 @@ impl TCTfilter {
     }
 }
 
+#[cfg(any(feature = "v1_12", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_12")))]
 impl PartialEq for TCTfilter {
     #[inline]
     fn eq(&self, other: &Self) -> bool {

@@ -2,23 +2,35 @@
 // from gir-files
 // DO NOT EDIT
 
-use crate::Connection;
-use crate::SettingCompareFlags;
-use crate::SettingSecretFlags;
-use glib::object::Cast;
-use glib::object::IsA;
-use glib::signal::connect_raw;
-use glib::signal::SignalHandlerId;
-use glib::translate::*;
-use std::boxed::Box as Box_;
-use std::fmt;
+use crate::{Connection, SettingCompareFlags, SettingSecretFlags};
+use glib::{
+    prelude::*,
+    signal::{connect_raw, SignalHandlerId},
+    translate::*,
+};
 #[cfg(any(feature = "v1_26", feature = "dox"))]
 #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_26")))]
 use std::mem;
-use std::mem::transmute;
-use std::ptr;
+use std::{boxed::Box as Box_, fmt, mem::transmute, ptr};
 
 glib::wrapper! {
+    ///
+    ///
+    /// This is an Abstract Base Class, you cannot instantiate it.
+    ///
+    /// ## Properties
+    ///
+    ///
+    /// #### `name`
+    ///  The setting's name, which uniquely identifies the setting within the
+    /// connection. Each setting type has a name unique to that type, for
+    /// example "ppp" or "802-11-wireless" or "802-3-ethernet".
+    ///
+    /// Readable
+    ///
+    /// # Implements
+    ///
+    /// [`SettingExt`][trait@crate::prelude::SettingExt], [`trait@glib::ObjectExt`]
     #[doc(alias = "NMSetting")]
     pub struct Setting(Object<ffi::NMSetting, ffi::NMSettingClass>);
 
@@ -28,6 +40,8 @@ glib::wrapper! {
 }
 
 impl Setting {
+    pub const NONE: Option<&'static Setting> = None;
+
     /// Returns the `GType` of the setting's class for a given setting name.
     /// ## `name`
     /// a setting name
@@ -49,30 +63,17 @@ impl fmt::Display for Setting {
     }
 }
 
-pub const NONE_SETTING: Option<&Setting> = None;
-
 /// Trait containing all [`struct@Setting`] methods.
 ///
 /// # Implementors
 ///
-/// [`Setting6Lowpan`][struct@crate::Setting6Lowpan], [`Setting8021x`][struct@crate::Setting8021x], [`SettingAdsl`][struct@crate::SettingAdsl], [`SettingBluetooth`][struct@crate::SettingBluetooth], [`SettingBond`][struct@crate::SettingBond], [`SettingBridgePort`][struct@crate::SettingBridgePort], [`SettingBridge`][struct@crate::SettingBridge], [`SettingCdma`][struct@crate::SettingCdma], [`SettingConnection`][struct@crate::SettingConnection], [`SettingDcb`][struct@crate::SettingDcb], [`SettingDummy`][struct@crate::SettingDummy], [`SettingEthtool`][struct@crate::SettingEthtool], [`SettingGeneric`][struct@crate::SettingGeneric], [`SettingGsm`][struct@crate::SettingGsm], [`SettingHostname`][struct@crate::SettingHostname], [`SettingIPConfig`][struct@crate::SettingIPConfig], [`SettingIPTunnel`][struct@crate::SettingIPTunnel], [`SettingInfiniband`][struct@crate::SettingInfiniband], [`SettingMacsec`][struct@crate::SettingMacsec], [`SettingMacvlan`][struct@crate::SettingMacvlan], [`SettingMatch`][struct@crate::SettingMatch], [`SettingOlpcMesh`][struct@crate::SettingOlpcMesh], [`SettingOvsBridge`][struct@crate::SettingOvsBridge], [`SettingOvsDpdk`][struct@crate::SettingOvsDpdk], [`SettingOvsExternalIDs`][struct@crate::SettingOvsExternalIDs], [`SettingOvsInterface`][struct@crate::SettingOvsInterface], [`SettingOvsPatch`][struct@crate::SettingOvsPatch], [`SettingOvsPort`][struct@crate::SettingOvsPort], [`SettingPpp`][struct@crate::SettingPpp], [`SettingPppoe`][struct@crate::SettingPppoe], [`SettingProxy`][struct@crate::SettingProxy], [`SettingSerial`][struct@crate::SettingSerial], [`SettingSriov`][struct@crate::SettingSriov], [`SettingTCConfig`][struct@crate::SettingTCConfig], [`SettingTeamPort`][struct@crate::SettingTeamPort], [`SettingTeam`][struct@crate::SettingTeam], [`SettingTun`][struct@crate::SettingTun], [`SettingUser`][struct@crate::SettingUser], [`SettingVeth`][struct@crate::SettingVeth], [`SettingVlan`][struct@crate::SettingVlan], [`SettingVpn`][struct@crate::SettingVpn], [`SettingVrf`][struct@crate::SettingVrf], [`SettingVxlan`][struct@crate::SettingVxlan], [`SettingWifiP2P`][struct@crate::SettingWifiP2P], [`SettingWimax`][struct@crate::SettingWimax], [`SettingWireGuard`][struct@crate::SettingWireGuard], [`SettingWired`][struct@crate::SettingWired], [`SettingWirelessSecurity`][struct@crate::SettingWirelessSecurity], [`SettingWireless`][struct@crate::SettingWireless], [`SettingWpan`][struct@crate::SettingWpan], [`Setting`][struct@crate::Setting]
+/// [`Setting6Lowpan`][struct@crate::Setting6Lowpan], [`Setting8021x`][struct@crate::Setting8021x], [`SettingAdsl`][struct@crate::SettingAdsl], [`SettingBluetooth`][struct@crate::SettingBluetooth], [`SettingBondPort`][struct@crate::SettingBondPort], [`SettingBond`][struct@crate::SettingBond], [`SettingBridgePort`][struct@crate::SettingBridgePort], [`SettingBridge`][struct@crate::SettingBridge], [`SettingCdma`][struct@crate::SettingCdma], [`SettingConnection`][struct@crate::SettingConnection], [`SettingDcb`][struct@crate::SettingDcb], [`SettingDummy`][struct@crate::SettingDummy], [`SettingEthtool`][struct@crate::SettingEthtool], [`SettingGeneric`][struct@crate::SettingGeneric], [`SettingGsm`][struct@crate::SettingGsm], [`SettingHostname`][struct@crate::SettingHostname], [`SettingIPConfig`][struct@crate::SettingIPConfig], [`SettingIPTunnel`][struct@crate::SettingIPTunnel], [`SettingInfiniband`][struct@crate::SettingInfiniband], [`SettingMacsec`][struct@crate::SettingMacsec], [`SettingMacvlan`][struct@crate::SettingMacvlan], [`SettingMatch`][struct@crate::SettingMatch], [`SettingOlpcMesh`][struct@crate::SettingOlpcMesh], [`SettingOvsBridge`][struct@crate::SettingOvsBridge], [`SettingOvsDpdk`][struct@crate::SettingOvsDpdk], [`SettingOvsExternalIDs`][struct@crate::SettingOvsExternalIDs], [`SettingOvsInterface`][struct@crate::SettingOvsInterface], [`SettingOvsPatch`][struct@crate::SettingOvsPatch], [`SettingOvsPort`][struct@crate::SettingOvsPort], [`SettingPpp`][struct@crate::SettingPpp], [`SettingPppoe`][struct@crate::SettingPppoe], [`SettingProxy`][struct@crate::SettingProxy], [`SettingSerial`][struct@crate::SettingSerial], [`SettingSriov`][struct@crate::SettingSriov], [`SettingTCConfig`][struct@crate::SettingTCConfig], [`SettingTeamPort`][struct@crate::SettingTeamPort], [`SettingTeam`][struct@crate::SettingTeam], [`SettingTun`][struct@crate::SettingTun], [`SettingUser`][struct@crate::SettingUser], [`SettingVeth`][struct@crate::SettingVeth], [`SettingVlan`][struct@crate::SettingVlan], [`SettingVpn`][struct@crate::SettingVpn], [`SettingVrf`][struct@crate::SettingVrf], [`SettingVxlan`][struct@crate::SettingVxlan], [`SettingWifiP2P`][struct@crate::SettingWifiP2P], [`SettingWimax`][struct@crate::SettingWimax], [`SettingWireGuard`][struct@crate::SettingWireGuard], [`SettingWired`][struct@crate::SettingWired], [`SettingWirelessSecurity`][struct@crate::SettingWirelessSecurity], [`SettingWireless`][struct@crate::SettingWireless], [`SettingWpan`][struct@crate::SettingWpan], [`Setting`][struct@crate::Setting]
 pub trait SettingExt: 'static {
-    /// Compares two [`Setting`][crate::Setting] objects for similarity, with comparison behavior
-    /// modified by a set of flags. See the documentation for [`SettingCompareFlags`][crate::SettingCompareFlags]
-    /// for a description of each flag's behavior.
-    /// ## `b`
-    /// a second [`Setting`][crate::Setting] to compare with the first
-    /// ## `flags`
-    /// compare flags, e.g. [`SettingCompareFlags::Exact`][crate::SettingCompareFlags::Exact]
-    ///
-    /// # Returns
-    ///
-    /// [`true`] if the comparison succeeds, [`false`] if it does not
     #[doc(alias = "nm_setting_compare")]
-    fn compare<P: IsA<Setting>>(&self, b: &P, flags: SettingCompareFlags) -> bool;
+    fn compare(&self, b: &impl IsA<Setting>, flags: SettingCompareFlags) -> bool;
 
     //#[doc(alias = "nm_setting_diff")]
-    //fn diff<P: IsA<Setting>>(&self, b: &P, flags: SettingCompareFlags, invert_results: bool, results: /*Unknown conversion*//*Unimplemented*/HashTable TypeId { ns_id: 0, id: 28 }/TypeId { ns_id: 0, id: 7 }) -> bool;
+    //fn diff(&self, b: &impl IsA<Setting>, flags: SettingCompareFlags, invert_results: bool, results: /*Unknown conversion*//*Unimplemented*/HashTable TypeId { ns_id: 0, id: 28 }/TypeId { ns_id: 0, id: 7 }) -> bool;
 
     /// Duplicates a [`Setting`][crate::Setting].
     ///
@@ -81,10 +82,11 @@ pub trait SettingExt: 'static {
     /// a new [`Setting`][crate::Setting] containing the same properties and values as the
     /// source [`Setting`][crate::Setting]
     #[doc(alias = "nm_setting_duplicate")]
+    #[must_use]
     fn duplicate(&self) -> Option<Setting>;
 
     //#[doc(alias = "nm_setting_enumerate_values")]
-    //fn enumerate_values(&self, func: /*Unimplemented*/FnMut(&Setting, &str, /*Ignored*/glib::Value, /*Ignored*/glib::ParamFlags), user_data: /*Unimplemented*/Option<Fundamental: Pointer>);
+    //fn enumerate_values(&self, func: /*Unimplemented*/FnMut(&Setting, &str, /*Ignored*/glib::Value, /*Ignored*/glib::ParamFlags), user_data: /*Unimplemented*/Option<Basic: Pointer>);
 
     /// Gets the D-Bus marshalling type of a property. `property_name` is a D-Bus
     /// property name, which may not necessarily be a [`glib::Object`][crate::glib::Object] property.
@@ -111,14 +113,14 @@ pub trait SettingExt: 'static {
     //#[cfg(any(feature = "v1_26", feature = "dox"))]
     //#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_26")))]
     //#[doc(alias = "nm_setting_option_clear_by_name")]
-    //fn option_clear_by_name(&self, predicate: Option<&mut dyn (FnMut(&str) -> bool)>);
+    //fn option_clear_by_name(&self, predicate: Option<&mut dyn (FnMut() -> bool)>);
 
     /// ## `opt_name`
     /// the option name to request.
     ///
     /// # Returns
     ///
-    /// the [`glib::Variant`][crate::glib::Variant] or [`None`] if the option
+    /// the [`glib::Variant`][struct@crate::glib::Variant] or [`None`] if the option
     ///  is not set.
     #[cfg(any(feature = "v1_26", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_26")))]
@@ -218,6 +220,16 @@ pub trait SettingExt: 'static {
         flags: SettingSecretFlags,
     ) -> Result<(), glib::Error>;
 
+    /// Convert the setting (including secrets!) into a string. For debugging
+    /// purposes ONLY, should NOT be used for serialization of the setting,
+    /// or machine-parsed in any way. The output format is not guaranteed to
+    /// be stable and may change at any time.
+    ///
+    /// # Returns
+    ///
+    /// an allocated string containing a textual representation of the
+    /// setting's properties and values, which the caller should
+    /// free with `g_free()`
     #[doc(alias = "nm_setting_to_string")]
     #[doc(alias = "to_string")]
     fn to_str(&self) -> glib::GString;
@@ -234,7 +246,7 @@ pub trait SettingExt: 'static {
     ///
     /// [`true`] if the setting is valid, [`false`] if it is not
     #[doc(alias = "nm_setting_verify")]
-    fn verify<P: IsA<Connection>>(&self, connection: Option<&P>) -> Result<(), glib::Error>;
+    fn verify(&self, connection: Option<&impl IsA<Connection>>) -> Result<(), glib::Error>;
 
     /// Verifies the secrets in the setting.
     /// The returned [`glib::Error`][crate::glib::Error] contains information about which secret of the setting
@@ -251,15 +263,14 @@ pub trait SettingExt: 'static {
     #[cfg(any(feature = "v1_2", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
     #[doc(alias = "nm_setting_verify_secrets")]
-    fn verify_secrets<P: IsA<Connection>>(&self, connection: Option<&P>)
-        -> Result<(), glib::Error>;
+    fn verify_secrets(&self, connection: Option<&impl IsA<Connection>>) -> Result<(), glib::Error>;
 
     #[doc(alias = "name")]
     fn connect_name_notify<F: Fn(&Self) + 'static>(&self, f: F) -> SignalHandlerId;
 }
 
 impl<O: IsA<Setting>> SettingExt for O {
-    fn compare<P: IsA<Setting>>(&self, b: &P, flags: SettingCompareFlags) -> bool {
+    fn compare(&self, b: &impl IsA<Setting>, flags: SettingCompareFlags) -> bool {
         unsafe {
             from_glib(ffi::nm_setting_compare(
                 self.as_ref().to_glib_none().0,
@@ -269,7 +280,7 @@ impl<O: IsA<Setting>> SettingExt for O {
         }
     }
 
-    //fn diff<P: IsA<Setting>>(&self, b: &P, flags: SettingCompareFlags, invert_results: bool, results: /*Unknown conversion*//*Unimplemented*/HashTable TypeId { ns_id: 0, id: 28 }/TypeId { ns_id: 0, id: 7 }) -> bool {
+    //fn diff(&self, b: &impl IsA<Setting>, flags: SettingCompareFlags, invert_results: bool, results: /*Unknown conversion*//*Unimplemented*/HashTable TypeId { ns_id: 0, id: 28 }/TypeId { ns_id: 0, id: 7 }) -> bool {
     //    unsafe { TODO: call ffi:nm_setting_diff() }
     //}
 
@@ -277,7 +288,7 @@ impl<O: IsA<Setting>> SettingExt for O {
         unsafe { from_glib_full(ffi::nm_setting_duplicate(self.as_ref().to_glib_none().0)) }
     }
 
-    //fn enumerate_values(&self, func: /*Unimplemented*/FnMut(&Setting, &str, /*Ignored*/glib::Value, /*Ignored*/glib::ParamFlags), user_data: /*Unimplemented*/Option<Fundamental: Pointer>) {
+    //fn enumerate_values(&self, func: /*Unimplemented*/FnMut(&Setting, &str, /*Ignored*/glib::Value, /*Ignored*/glib::ParamFlags), user_data: /*Unimplemented*/Option<Basic: Pointer>) {
     //    unsafe { TODO: call ffi:nm_setting_enumerate_values() }
     //}
 
@@ -296,7 +307,7 @@ impl<O: IsA<Setting>> SettingExt for O {
 
     //#[cfg(any(feature = "v1_26", feature = "dox"))]
     //#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_26")))]
-    //fn option_clear_by_name(&self, predicate: Option<&mut dyn (FnMut(&str) -> bool)>) {
+    //fn option_clear_by_name(&self, predicate: Option<&mut dyn (FnMut() -> bool)>) {
     //    unsafe { TODO: call ffi:nm_setting_option_clear_by_name() }
     //}
 
@@ -321,7 +332,7 @@ impl<O: IsA<Setting>> SettingExt for O {
                     self.as_ref().to_glib_none().0,
                     out_len.as_mut_ptr(),
                 ),
-                out_len.assume_init() as usize,
+                out_len.assume_init() as _,
             );
             ret
         }
@@ -337,9 +348,8 @@ impl<O: IsA<Setting>> SettingExt for O {
                 opt_name.to_glib_none().0,
                 out_value.as_mut_ptr(),
             ));
-            let out_value = out_value.assume_init();
             if ret {
-                Some(from_glib(out_value))
+                Some(from_glib(out_value.assume_init()))
             } else {
                 None
             }
@@ -356,9 +366,8 @@ impl<O: IsA<Setting>> SettingExt for O {
                 opt_name.to_glib_none().0,
                 out_value.as_mut_ptr(),
             ));
-            let out_value = out_value.assume_init();
             if ret {
-                Some(out_value)
+                Some(out_value.assume_init())
             } else {
                 None
             }
@@ -408,12 +417,13 @@ impl<O: IsA<Setting>> SettingExt for O {
     ) -> Result<(), glib::Error> {
         unsafe {
             let mut error = ptr::null_mut();
-            let _ = ffi::nm_setting_set_secret_flags(
+            let is_ok = ffi::nm_setting_set_secret_flags(
                 self.as_ref().to_glib_none().0,
                 secret_name.to_glib_none().0,
                 flags.into_glib(),
                 &mut error,
             );
+            debug_assert_eq!(is_ok == glib::ffi::GFALSE, !error.is_null());
             if error.is_null() {
                 Ok(())
             } else {
@@ -426,14 +436,15 @@ impl<O: IsA<Setting>> SettingExt for O {
         unsafe { from_glib_full(ffi::nm_setting_to_string(self.as_ref().to_glib_none().0)) }
     }
 
-    fn verify<P: IsA<Connection>>(&self, connection: Option<&P>) -> Result<(), glib::Error> {
+    fn verify(&self, connection: Option<&impl IsA<Connection>>) -> Result<(), glib::Error> {
         unsafe {
             let mut error = ptr::null_mut();
-            let _ = ffi::nm_setting_verify(
+            let is_ok = ffi::nm_setting_verify(
                 self.as_ref().to_glib_none().0,
                 connection.map(|p| p.as_ref()).to_glib_none().0,
                 &mut error,
             );
+            debug_assert_eq!(is_ok == glib::ffi::GFALSE, !error.is_null());
             if error.is_null() {
                 Ok(())
             } else {
@@ -444,17 +455,15 @@ impl<O: IsA<Setting>> SettingExt for O {
 
     #[cfg(any(feature = "v1_2", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_2")))]
-    fn verify_secrets<P: IsA<Connection>>(
-        &self,
-        connection: Option<&P>,
-    ) -> Result<(), glib::Error> {
+    fn verify_secrets(&self, connection: Option<&impl IsA<Connection>>) -> Result<(), glib::Error> {
         unsafe {
             let mut error = ptr::null_mut();
-            let _ = ffi::nm_setting_verify_secrets(
+            let is_ok = ffi::nm_setting_verify_secrets(
                 self.as_ref().to_glib_none().0,
                 connection.map(|p| p.as_ref()).to_glib_none().0,
                 &mut error,
             );
+            debug_assert_eq!(is_ok == glib::ffi::GFALSE, !error.is_null());
             if error.is_null() {
                 Ok(())
             } else {

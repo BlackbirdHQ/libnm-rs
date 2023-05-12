@@ -63,7 +63,7 @@ impl IPRoute {
     }
 
     //#[doc(alias = "nm_ip_route_new_binary")]
-    //pub fn new_binary(family: i32, dest: /*Unimplemented*/Option<Fundamental: Pointer>, prefix: u32, next_hop: /*Unimplemented*/Option<Fundamental: Pointer>, metric: i64) -> Result<IPRoute, glib::Error> {
+    //pub fn new_binary(family: i32, dest: /*Unimplemented*/Option<Basic: Pointer>, prefix: u32, next_hop: /*Unimplemented*/Option<Basic: Pointer>, metric: i64) -> Result<IPRoute, glib::Error> {
     //    unsafe { TODO: call ffi:nm_ip_route_new_binary() }
     //}
 
@@ -79,18 +79,11 @@ impl IPRoute {
     #[cfg(any(feature = "v1_32", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_32")))]
     #[doc(alias = "nm_ip_route_dup")]
+    #[must_use]
     pub fn dup(&self) -> Option<IPRoute> {
         unsafe { from_glib_full(ffi::nm_ip_route_dup(self.to_glib_none().0)) }
     }
 
-    /// Determines if two [`IPRoute`][crate::IPRoute] objects contain the same destination, prefix,
-    /// next hop, and metric. (Attributes are not compared.)
-    /// ## `other`
-    /// the [`IPRoute`][crate::IPRoute] to compare `self` to.
-    ///
-    /// # Returns
-    ///
-    /// [`true`] if the objects contain the same values, [`false`] if they do not.
     #[doc(alias = "nm_ip_route_equal")]
     fn equal(&self, other: &IPRoute) -> bool {
         unsafe {
@@ -158,7 +151,7 @@ impl IPRoute {
 
     //#[doc(alias = "nm_ip_route_get_dest_binary")]
     //#[doc(alias = "get_dest_binary")]
-    //pub fn dest_binary(&self, dest: /*Unimplemented*/Option<Fundamental: Pointer>) {
+    //pub fn dest_binary(&self, dest: /*Unimplemented*/Option<Basic: Pointer>) {
     //    unsafe { TODO: call ffi:nm_ip_route_get_dest_binary() }
     //}
 
@@ -201,7 +194,7 @@ impl IPRoute {
 
     //#[doc(alias = "nm_ip_route_get_next_hop_binary")]
     //#[doc(alias = "get_next_hop_binary")]
-    //pub fn is_next_hop_binary(&self, next_hop: /*Unimplemented*/Option<Fundamental: Pointer>) -> bool {
+    //pub fn is_next_hop_binary(&self, next_hop: /*Unimplemented*/Option<Basic: Pointer>) -> bool {
     //    unsafe { TODO: call ffi:nm_ip_route_get_next_hop_binary() }
     //}
 
@@ -246,7 +239,7 @@ impl IPRoute {
     }
 
     //#[doc(alias = "nm_ip_route_set_dest_binary")]
-    //pub fn set_dest_binary(&self, dest: /*Unimplemented*/Option<Fundamental: Pointer>) {
+    //pub fn set_dest_binary(&self, dest: /*Unimplemented*/Option<Basic: Pointer>) {
     //    unsafe { TODO: call ffi:nm_ip_route_set_dest_binary() }
     //}
 
@@ -275,7 +268,7 @@ impl IPRoute {
     }
 
     //#[doc(alias = "nm_ip_route_set_next_hop_binary")]
-    //pub fn set_next_hop_binary(&self, next_hop: /*Unimplemented*/Option<Fundamental: Pointer>) {
+    //pub fn set_next_hop_binary(&self, next_hop: /*Unimplemented*/Option<Basic: Pointer>) {
     //    unsafe { TODO: call ffi:nm_ip_route_set_next_hop_binary() }
     //}
 
@@ -315,16 +308,16 @@ impl IPRoute {
         unsafe {
             let mut known = mem::MaybeUninit::uninit();
             let mut error = ptr::null_mut();
-            let _ = ffi::nm_ip_route_attribute_validate(
+            let is_ok = ffi::nm_ip_route_attribute_validate(
                 name.to_glib_none().0,
                 value.to_glib_none().0,
                 family,
                 known.as_mut_ptr(),
                 &mut error,
             );
-            let known = known.assume_init();
+            debug_assert_eq!(is_ok == glib::ffi::GFALSE, !error.is_null());
             if error.is_null() {
-                Ok(from_glib(known))
+                Ok(from_glib(known.assume_init()))
             } else {
                 Err(from_glib_full(error))
             }

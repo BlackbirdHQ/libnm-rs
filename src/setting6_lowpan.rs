@@ -3,17 +3,38 @@
 // DO NOT EDIT
 
 use crate::Setting;
-use glib::object::Cast;
-use glib::object::ObjectType as ObjectType_;
-use glib::signal::connect_raw;
-use glib::signal::SignalHandlerId;
-use glib::translate::*;
-use glib::ToValue;
-use std::boxed::Box as Box_;
-use std::fmt;
-use std::mem::transmute;
+use glib::{
+    prelude::*,
+    signal::{connect_raw, SignalHandlerId},
+    translate::*,
+};
+use std::{boxed::Box as Box_, fmt, mem::transmute};
 
 glib::wrapper! {
+    /// 6LoWPAN Settings
+    ///
+    /// ## Properties
+    ///
+    ///
+    /// #### `parent`
+    ///  If given, specifies the parent interface name or parent connection UUID
+    /// from which this 6LowPAN interface should be created.
+    ///
+    /// Readable | Writeable
+    /// <details><summary><h4>Setting</h4></summary>
+    ///
+    ///
+    /// #### `name`
+    ///  The setting's name, which uniquely identifies the setting within the
+    /// connection. Each setting type has a name unique to that type, for
+    /// example "ppp" or "802-11-wireless" or "802-3-ethernet".
+    ///
+    /// Readable
+    /// </details>
+    ///
+    /// # Implements
+    ///
+    /// [`SettingExt`][trait@crate::prelude::SettingExt], [`trait@glib::ObjectExt`]
     #[doc(alias = "NMSetting6Lowpan")]
     pub struct Setting6Lowpan(Object<ffi::NMSetting6Lowpan, ffi::NMSetting6LowpanClass>) @extends Setting;
 
@@ -28,6 +49,8 @@ impl Setting6Lowpan {
     /// # Returns
     ///
     /// the new empty [`Setting6Lowpan`][crate::Setting6Lowpan] object
+    #[cfg(any(feature = "v1_42", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_42")))]
     #[doc(alias = "nm_setting_6lowpan_new")]
     pub fn new() -> Setting6Lowpan {
         unsafe { Setting::from_glib_full(ffi::nm_setting_6lowpan_new()).unsafe_cast() }
@@ -36,7 +59,9 @@ impl Setting6Lowpan {
     ///
     /// # Returns
     ///
-    /// the `property::Setting6Lowpan::parent` property of the setting
+    /// the [`parent`][struct@crate::Setting6Lowpan#parent] property of the setting
+    #[cfg(any(feature = "v1_42", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_42")))]
     #[doc(alias = "nm_setting_6lowpan_get_parent")]
     #[doc(alias = "get_parent")]
     pub fn parent(&self) -> Option<glib::GString> {
@@ -47,14 +72,16 @@ impl Setting6Lowpan {
     /// from which this 6LowPAN interface should be created.
     #[cfg(any(feature = "v1_14", feature = "dox"))]
     #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_14")))]
+    pub fn get_property_parent(&self) -> Option<glib::GString> {
+        glib::ObjectExt::property(self, "parent")
+    }
+
+    /// If given, specifies the parent interface name or parent connection UUID
+    /// from which this 6LowPAN interface should be created.
+    #[cfg(any(feature = "v1_14", feature = "dox"))]
+    #[cfg_attr(feature = "dox", doc(cfg(feature = "v1_14")))]
     pub fn set_parent(&self, parent: Option<&str>) {
-        unsafe {
-            glib::gobject_ffi::g_object_set_property(
-                self.as_ptr() as *mut glib::gobject_ffi::GObject,
-                b"parent\0".as_ptr() as *const _,
-                parent.to_value().to_glib_none().0,
-            );
-        }
+        glib::ObjectExt::set_property(self, "parent", &parent)
     }
 
     #[cfg(any(feature = "v1_14", feature = "dox"))]
@@ -83,8 +110,8 @@ impl Setting6Lowpan {
     }
 }
 
-#[cfg(any(feature = "v1_14", feature = "dox"))]
-#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_14")))]
+#[cfg(any(feature = "v1_42", feature = "dox"))]
+#[cfg_attr(feature = "dox", doc(cfg(feature = "v1_42")))]
 impl Default for Setting6Lowpan {
     fn default() -> Self {
         Self::new()
